@@ -1,0 +1,163 @@
+"LAMMPS WWW Site"_lws - "LAMMPS Documentation"_ld - "LAMMPS Commands"_lc :c
+
+:link(lws,http://lammps.sandia.gov)
+:link(ld,Manual.html)
+:link(lc,Section_commands.html#comm)
+
+:line
+
+fix gfc command :h3
+
+[Syntax:]
+
+fix ID group-ID gfc N Noutput Nwait prefix keyword values ... :pre
+
+ID, group-ID are documented in "fix"_fix.html command :ulb,l
+gfc = style name of this fix command :l
+N = measure the Green's function every this many timesteps :l
+Noutput = output the elastic stiffness coefficient every this many measurements :l
+Nwait = wait this many timesteps before starting to compute Green's function :l
+prefix = prefix for output files :l
+one or more keyword/value pairs may be appended :l
+keyword = {su} or {sv} or {origin} or {map} :l
+  {su} args = ux uy
+    ux,uy = surface vector U in the standard units described by the "units"_units.html command
+  {sv} args = vx vy
+    vx,vy = surface vector V in the standard units described by the "units"_units.html command
+  {origin} value = tag of the atom which will be set as the surface origin
+  {map} value = file-name
+    file-name = file that carries the mapping between surface atom tags and FFT index :pre
+:ule
+
+[Examples:]
+
+fix 1 bottom gfc 20 5000 200000 LJ2D_GFC
+fix 1 bottom gfc 20 5000 200000 LJ3D  map map.in origin 1
+fix 1 bottom gfc 20 5000 200000 EAM3D su 2.2137265 1.2780955 sv 0 2.556191 :pre
+
+[Description:]
+
+Compute the elatic stiffness coefficients based on fluctuation-dissipation
+theory for a group of atoms (in the examples above of group 'bottom').
+
+Based on fluctuation-dissipation theory, the elastic stiffness coefficients
+are given by
+<center>&Phi;<sub>&alpha;,&beta;</sub>(<b>q</b>) = k<sub>B</sub>T
+<b>G</b><sup>-1</sup><sub>&alpha;,&beta;</sub>(<b>q</b>),</center>
+
+where [G] is the Green's functions coefficients given by
+
+<center><b>G</b><sub>&alpha;,&beta;</sub>(<b>q</b>) =
+<<b>u</b><sub>&alpha;</sub>(<b>q</b>)&#149;<b>u</b><sub>&beta;</sub><sup>*</sup>(<b>q</b>)>.</center>
+
+Here [u]<sub>&alpha;</sub>([q]) is the &alpha; component of the
+atomic displacement in the reciprocal space at [q]. In practice, the Green's
+functions coefficients can also be measured according to the following formula,
+
+<center><b>G</b><sub>&alpha;,&beta;</sub>(<b>q</b>) =
+<<b>R</b><sub>&alpha;</sub>(<b>q</b>)&#149;<b>R</b><sup>*</sup><sub>&beta;</sub>(<b>q</b>)>
+- <<b>R</b>><sub>&alpha;</sub>(<b>q</b>)&#149;<<b>R</b>><sup>*</sup><sub>&beta;</sub>(<b>q</b>),
+</center>
+
+where [R] is the instantaneous positions of atoms, and <[R]> is
+the averaged atomic positions. It gives essentially the same
+results as the displacement method and is easier to implement into an MD code.
+
+
+This fix records the positions of atoms in the corresponding group and the two-point
+correlations. To achieve this the positions of the atoms are recorded every Nevery steps and are
+Fourier-transformed (with "FFT3d wrapper"_kspace_style.html from kspace package of LAMMPS) into reciprocal
+space, in which the averaging process and correlation computation is then done. After
+every Noutput measurements, the matrix [G]([q]) is calculated and inverted
+to get the elastic stiffness coefficients. The resulting matrix elements
+[&Phi;]<sub>&alpha;,&beta;</sub>([q]) are written to
+file "prefix".bin."timestep" in binary format and to file "prefix".log for
+each wavevector [q]; in 
+practice, since all atomic positions are real numbers and their corresponding
+reciprocal values satisfie the "Hermitian" redundancy, only
+roughly half of the [q] points are recorded in the binary file.
+
+A detailed description of this method and its application to contact
+mechanics can be found in ("Campa&ntilde;&aacute;"_#campana , "Kong"_#kong).
+
+If the {map} keyword is specified, the code will try to read the
+mapping between surface atoms and FFT mesh information from the
+file provided; in this case, keywords {su}, {sv} and {origin}
+are not necessary and ignored.
+
+If the {su} and/or {sv} keywords are specified while {map}
+is not, the code will try to compute the mapping between
+surface atoms and the FFT mesh based on the values provided; otherwise the
+surface vector will be deduced from the lattice information,
+while requires the user to provide it via "lattice"_lattice.html command.
+
+If there are more than one atoms in the surface unit cell, one need to provide the mapping
+information via keyworkd {map}, since it is not possible for the
+code to compute it with only the surface vecotrs in hand; an exception is when
+there are two atoms in a surface unit cell and one of them
+sits on the lattice site while the other one on the lattice center.
+
+Keyword {origin} is used to make sure that the surface origin remains
+the same for both elastic stiffness coefficients measurement by
+this fix and subsequent Green's Function molecular dynamics by "fix gfmd"_fix_gfmd.html,
+when there are more than one atoms in a surface unit cell and that these atoms
+are not identical to each other.
+
+The unit of the measured elastic stiffness coefficient is
+"energy/distance^2"_units.html.
+
+For a restart run where the atoms in the Green's function layer do not sit at their
+equilibrium positions, one would better provide the mapping info via keyword {map}.
+
+[Restart, fix_modify, output, run start/stop, minimize info:]
+
+No information about this fix is written to "binary restart
+files"_restart.html. 
+
+The "fix_modify"_fix_modify.html {temp} option
+is supported by this fix. You can use it to change the 
+temperature compute from thermo_temp to the one that reflects the true
+temperature of atoms in the group.
+
+No global scalar or vector or per-atom
+quantities are stored by this fix for access by various "output
+commands"_Section_howto.html#4_15.
+Instead, this fix outputs the initialization information (in which the
+mapping information can be found) and the calculated
+elastic stiffness coefficients into file "prefix".log, where "prefix" will be
+replaced by the prefix given; besides, the
+elastic stiffness coefficients will also be written to file
+"prefix".bin."timestep" in binary format, which could be
+used by "fix gfmd"_fix_gfmd.html for Green's functions molecular
+dynamics simulations. At the end of run, these information will also be written.
+
+No parameter of this fix can be used with the {start/stop} keywords
+of the "run"_run.html command.
+
+This fix is not invoked during "energy minimization"_minimize.html.
+
+[Restrictions:]
+
+This fix assumes a single layer (or a line for 2D system) of atoms with
+periodical lattice. The temperature of the system
+should not be too high so that the harmonic approximation works.
+
+[Related commands:]
+
+"fix gfmd"_fix_gfmd.html
+
+[Note:] Compiling of this fix along with LAMMPS requires that 
+the "FFT3d wrappers of kspace"_kspace_style.html of LAMMPS is included
+while compiling.
+
+:line
+
+:link(campana)
+[(Campa&ntilde;&aacute;)] C. Campa&ntilde;&aacute; and M. H. M&uuml;ser, {Practical Green's function approach
+to the simulation of elastic semi-infinite solids}, "Phys. Rev. B [74], 075420
+(2006)"_http://dx.doi.org/10.1103/PhysRevB.74.075420
+
+:link(kong)
+[(Kong)] L.T. Kong, G. Bartels, C. Campa&ntilde;&aacute;, C. Denniston, and Martin H. M&uuml;ser, 
+{Implementation of Green's function molecular dynamics: An extension to LAMMPS},
+"Computer Physics Communications, in press (2009), doi:10.1016/j.cpc.2008.12.035"_http://dx.doi.org/10.1016/j.cpc.2008.12.035

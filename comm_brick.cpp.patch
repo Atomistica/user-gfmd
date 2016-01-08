@@ -1,0 +1,20 @@
+--- comm_brick.cpp	2015-11-16 15:07:07.158302896 -0500
++++ comm_brick.cpp.orig	2015-11-16 15:06:50.568768896 -0500
+@@ -977,7 +977,7 @@
+ 
+     if (sendproc[iswap] != me) {
+       if (recvnum[iswap])
+-        MPI_Irecv(buf_recv,nsize*recvnum[iswap],MPI_DOUBLE,recvproc[iswap],0,
++        MPI_Irecv(buf_recv,maxrecv,MPI_DOUBLE,recvproc[iswap],0,
+                   world,&request);
+       if (sendnum[iswap])
+         MPI_Send(buf_send,n,MPI_DOUBLE,sendproc[iswap],0,world);
+@@ -1020,7 +1020,7 @@
+ 
+     if (sendproc[iswap] != me) {
+       if (sendnum[iswap])
+-        MPI_Irecv(buf_recv,nsize*sendnum[iswap],MPI_DOUBLE,sendproc[iswap],0,
++        MPI_Irecv(buf_recv,maxrecv,MPI_DOUBLE,sendproc[iswap],0,
+                   world,&request);
+       if (recvnum[iswap])
+         MPI_Send(buf_send,n,MPI_DOUBLE,recvproc[iswap],0,world);

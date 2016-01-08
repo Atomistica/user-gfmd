@@ -1,0 +1,50 @@
+# 3D Copper block simulation
+units         metal
+boundary      p p fs
+atom_style    atomic
+
+# read in initial configuration
+read_data     data.pos
+
+# define groups
+group         bottom id > 5472
+group         upper  id < 289
+group         slab   subtract all bottom upper
+group         mobile subtract all upper
+
+# EAM potential
+pair_style    eam
+pair_coeff    * * cuu3.eam
+mass          1 63.55
+
+#
+neighbor      4.0 nsq
+neigh_modify  every 4 delay 0 check yes
+
+# Define Langevin thermostat parameters
+variable      r equal 570835
+variable      t equal 100
+variable      d equal 1000
+
+# Create velocities
+compute       MyTemp mobile temp
+velocity      mobile create $t 28711 mom yes rot yes dist gaussian temp MyTemp
+velocity      upper set 0 0 0 units box
+
+# Defines fixes, gfc is used to measure the elastic stiffness coefficients
+fix           1 mobile langevin $t $t $d $r
+fix_modify    1 temp MyTemp
+fix           2 mobile nve
+fix           3 bottom gfc 20 250000 5000000 EAMCu111 su 4.427453  0.0 sv 0 2.556191
+fix_modify    3 temp MyTemp
+
+# Thermo output 
+thermo        1000
+thermo_style  custom step temp pe etotal pxx pyy pzz pxy pxz pyz press
+thermo_modify temp MyTemp
+
+# Dump trajectory, can be visualized via vmd
+dump          1 all atom 100000 dump_EAM3D_GFC.lammpstrj 
+
+# Run for 10500000 steps; the measurement is done in the last 10 million steps
+run           15000000

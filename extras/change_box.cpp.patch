@@ -1,0 +1,40 @@
+--- change_box.cpp	2013-10-02 01:08:25.631554194 -0400
++++ USER-GFMD/change_box.cpp	2013-10-02 01:09:18.124235194 -0400
+@@ -323,17 +323,21 @@
+       // save current box state
+ 
+       double **x = atom->x;
++      double **xeq = atom->xeq; // TAS
+       int *mask = atom->mask;
+       int nlocal = atom->nlocal;
+ 
+       for (i = 0; i < nlocal; i++)
+-        if (mask[i] & groupbit)
++        if (mask[i] & groupbit) {
+           domain->x2lamda(x[i],x[i],boxlo,h_inv);
++          domain->x2lamda(xeq[i],xeq[i],boxlo,h_inv); // TAS
++	}
+ 
+       for (i = 0; i < nlocal; i++)
+-        if (mask[i] & groupbit)
++        if (mask[i] & groupbit) {
+           domain->lamda2x(x[i],x[i]);
+-
++          domain->lamda2x(xeq[i],xeq[i]); // TAS
++	}
+       save_box_state();
+     }
+   }
+@@ -344,11 +348,7 @@
+ 
+   // apply shrink-wrap boundary conditions
+ 
+-  if (domain->nonperiodic == 2) {
+-    if (domain->triclinic) domain->x2lamda(atom->nlocal);
+-    domain->reset_box();
+-    if (domain->triclinic) domain->lamda2x(atom->nlocal);
+-  }
++  if (domain->nonperiodic == 2) domain->reset_box();
+ 
+   // move atoms back inside simulation box and to new processors
+   // use remap() instead of pbc()

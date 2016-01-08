@@ -1,0 +1,21 @@
+Example to measure the elastic stiffness coefficient for a (1+1)D LJ system
+with FixGFC
+
+Input files:
+   1) in.LJ2D                : LAMMPS script
+   2) data.pos               : Atomic configuration
+Output files:
+   1) log.16Jul2009          : log file of LAMMPS
+   2) LJ2D_prim.log          
+   3) LJ2D_comp.log          : log files of FixGFC
+   4) LJ2D_prim.bin.10500000
+   5) LJ2D_comp.bin.10500000 : binary Elastic Stiffness Coefficients files
+
+Other files:
+   1) plot.gnuplot           : script to extract Phi-q relation figure
+   2) Phi_q_LJ2D_1.eps
+   3) Phi_q_LJ2D_2.eps       : Phi-q figure for primitive cell and complex cell, respectively
+
+To run this example, just invoke:
+lmp -in in.LJ2D -screen none &
+It will take about half an hour on a 2.4 GHz single processor.

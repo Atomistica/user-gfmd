@@ -1,0 +1,7 @@
+
+Please see README in parent directory
+
+lj1nn
+A sub-quadratic force error appears in the test as set up right now, near u=1e-6 and f=1e-6
+Possibly height is not 42.
+Previously all-atom test was set up to match gf test and the error was quadratic

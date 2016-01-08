@@ -1,0 +1,33 @@
+# Define lattice and create atoms
+variable        nz equal 6
+#variable        a0 equal 5.432
+variable        a0 equal 5.432005203971
+variable        aux1 equal sqrt(2)/2
+variable        aux2 equal sqrt(2)/4
+variable        d0 equal ${a0}*sqrt(3)/4
+lattice         custom ${a0} a1 ${aux1} 0 0 a2 0 ${aux1} 0 a3 0 0 1 basis 0 0 0 basis 0.5 0 0.25 basis 0.5 0.5 0.5 basis 0 0.5 0.75
+#lattice         custom ${a0} a1 ${aux1} 0 0 a2 0 ${aux1} 0 a3 0 0 2 basis 0 0 0 basis 0.5 0 0.125 basis 0.5 0.5 0.25 basis 0 0.5 0.375 basis 0 0 0.5 basis 0.5 0 0.625 basis 0.5 0.5 0.75 basis 0 0.5 0.875
+region          box block 0 4 0 4 -27 17
+create_box      1 box
+region          atoms block INF INF INF INF ${bottom} ${nz}
+create_atoms    1 region atoms
+mass            1 1.0
+
+# This are the two bottommost layers of atoms
+variable        bottomtop equal ${bottom}+0.9
+region          bottom block INF INF INF INF ${bottom} ${bottomtop}
+group           bottom region bottom
+
+# This is the probe atom
+# --- First row atom ---
+region          probe1 block 2.0 2.9 2.0 2.9 -0.05 0.05
+# --- Second row atom ---
+region          probe2 block 2.3 2.9 2.0 2.9 0.15 0.35
+# --- Third row atom ---
+region          probe3 block 2.3 2.9 2.0 2.9 0.35 0.55
+# --- Fourth row atom ---
+region          probe4 block 2.0 2.9 2.0 2.9 0.55 0.75
+#group           probeA region probe1
+#group           probeB region probe3
+#group           probe1 union probeA probeB
+group           probe1 region probe1

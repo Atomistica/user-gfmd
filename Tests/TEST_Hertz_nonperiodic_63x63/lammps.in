@@ -1,0 +1,53 @@
+processors      1 1 1
+
+boundary        p p m
+units           lj
+atom_style      gfmd
+atom_modify     sort 0 1.0
+
+#
+# Create GFMD lattice
+#
+
+lattice         sc 1.0
+region          cell block  0 63  0 63  0 1
+create_box      1 cell
+mass            1 1.0
+create_atoms    1 box
+
+displace_atoms  all move 0.5 0.5 0.5 units box
+
+#
+# GFMD substrate
+#
+
+fix             static_gfmd all gfmd gfmd nonperiodic 0.3 1.0 reset_xeq reset_map dumpr_every 1000000
+#fix             static_gfmd all gfmd gfmd isotropic 0.3 1.0 1.0 reset_xeq reset_map dumpr_every 1000000
+fix_modify      static_gfmd energy yes
+
+#
+# Sphere
+#
+
+displace_atoms  all move 0.0 0.0 -2.0 units box
+
+fix             sphere all contact/sphere 0 0 99 100.0 1.38888888888889 0.890898718140339 1.0
+fix_modify      sphere energy yes
+
+#
+# Output
+#
+
+compute         com all com
+thermo          1000
+thermo_style    custom step fmax fnorm ke pe etotal f_static_gfmd[1] f_static_gfmd[2] f_static_gfmd[3] c_com[1] c_com[2] c_com[3]
+thermo_modify   format float "%15.10f" norm no
+
+#
+# Minimize
+#
+
+min_style       cg
+#min_style       fire
+#timestep        0.01
+minimize        0.0 1e-6 1000000 1000000

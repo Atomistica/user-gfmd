@@ -1,0 +1,178 @@
+<HTML>
+<CENTER><A HREF = "http://lammps.sandia.gov">LAMMPS WWW Site</A> - <A HREF = "Manual.html">LAMMPS Documentation</A> - <A HREF = "Section_commands.html#comm">LAMMPS Commands</A> 
+</CENTER>
+
+
+
+
+
+
+<HR>
+
+<H3>fix gfc command 
+</H3>
+<P><B>Syntax:</B>
+</P>
+<PRE>fix ID group-ID gfc N Noutput Nwait prefix keyword values ... 
+</PRE>
+<UL><LI>ID, group-ID are documented in <A HREF = "fix.html">fix</A> command 
+
+<LI>gfc = style name of this fix command 
+
+<LI>N = measure the Green's function every this many timesteps 
+
+<LI>Noutput = output the elastic stiffness coefficient every this many measurements 
+
+<LI>Nwait = wait this many timesteps before starting to compute Green's function 
+
+<LI>prefix = prefix for output files 
+
+<LI>one or more keyword/value pairs may be appended 
+
+<LI>keyword = <I>su</I> or <I>sv</I> or <I>origin</I> or <I>map</I> 
+
+<PRE>  <I>su</I> args = ux uy
+    ux,uy = surface vector U in the standard units described by the <A HREF = "units.html">units</A> command
+  <I>sv</I> args = vx vy
+    vx,vy = surface vector V in the standard units described by the <A HREF = "units.html">units</A> command
+  <I>origin</I> value = tag of the atom which will be set as the surface origin
+  <I>map</I> value = file-name
+    file-name = file that carries the mapping between surface atom tags and FFT index 
+</PRE>
+
+</UL>
+<P><B>Examples:</B>
+</P>
+<PRE>fix 1 bottom gfc 20 5000 200000 LJ2D_GFC
+fix 1 bottom gfc 20 5000 200000 LJ3D  map map.in origin 1
+fix 1 bottom gfc 20 5000 200000 EAM3D su 2.2137265 1.2780955 sv 0 2.556191 
+</PRE>
+<P><B>Description:</B>
+</P>
+<P>Compute the elatic stiffness coefficients based on fluctuation-dissipation
+theory for a group of atoms (in the examples above of group 'bottom').
+</P>
+<P>Based on fluctuation-dissipation theory, the elastic stiffness coefficients
+are given by
+<center>&Phi;<sub>&alpha;,&beta;</sub>(<b>q</b>) = k<sub>B</sub>T
+<b>G</b><sup>-1</sup><sub>&alpha;,&beta;</sub>(<b>q</b>),</center>
+</P>
+<P>where <B>G</B> is the Green's functions coefficients given by
+</P>
+<center><b>G</b><sub>&alpha;,&beta;</sub>(<b>q</b>) =
+<<b>u</b><sub>&alpha;</sub>(<b>q</b>)&#149;<b>u</b><sub>&beta;</sub><sup>*</sup>(<b>q</b>)>.</center>
+
+<P>Here <B>u</B><sub>&alpha;</sub>(<B>q</B>) is the &alpha; component of the
+atomic displacement in the reciprocal space at <B>q</B>. In practice, the Green's
+functions coefficients can also be measured according to the following formula,
+</P>
+<center><b>G</b><sub>&alpha;,&beta;</sub>(<b>q</b>) =
+<<b>R</b><sub>&alpha;</sub>(<b>q</b>)&#149;<b>R</b><sup>*</sup><sub>&beta;</sub>(<b>q</b>)>
+- <<b>R</b>><sub>&alpha;</sub>(<b>q</b>)&#149;<<b>R</b>><sup>*</sup><sub>&beta;</sub>(<b>q</b>),
+</center>
+
+<P>where <B>R</B> is the instantaneous positions of atoms, and <<B>R</B>> is
+the averaged atomic positions. It gives essentially the same
+results as the displacement method and is easier to implement into an MD code.
+</P>
+<P>This fix records the positions of atoms in the corresponding group and the two-point
+correlations. To achieve this the positions of the atoms are recorded every Nevery steps and are
+Fourier-transformed (with <A HREF = "kspace_style.html">FFT3d wrapper</A> from kspace package of LAMMPS) into reciprocal
+space, in which the averaging process and correlation computation is then done. After
+every Noutput measurements, the matrix <B>G</B>(<B>q</B>) is calculated and inverted
+to get the elastic stiffness coefficients. The resulting matrix elements
+<B>&Phi;</B><sub>&alpha;,&beta;</sub>(<B>q</B>) are written to
+file "prefix".bin."timestep" in binary format and to file "prefix".log for
+each wavevector <B>q</B>; in 
+practice, since all atomic positions are real numbers and their corresponding
+reciprocal values satisfie the "Hermitian" redundancy, only
+roughly half of the <B>q</B> points are recorded in the binary file.
+</P>
+<P>A detailed description of this method and its application to contact
+mechanics can be found in (<A HREF = "#campana">Campa&ntilde;&aacute;</A> , <A HREF = "#kong">Kong</A>).
+</P>
+<P>If the <I>map</I> keyword is specified, the code will try to read the
+mapping between surface atoms and FFT mesh information from the
+file provided; in this case, keywords <I>su</I>, <I>sv</I> and <I>origin</I>
+are not necessary and ignored.
+</P>
+<P>If the <I>su</I> and/or <I>sv</I> keywords are specified while <I>map</I>
+is not, the code will try to compute the mapping between
+surface atoms and the FFT mesh based on the values provided; otherwise the
+surface vector will be deduced from the lattice information,
+while requires the user to provide it via <A HREF = "lattice.html">lattice</A> command.
+</P>
+<P>If there are more than one atoms in the surface unit cell, one need to provide the mapping
+information via keyworkd <I>map</I>, since it is not possible for the
+code to compute it with only the surface vecotrs in hand; an exception is when
+there are two atoms in a surface unit cell and one of them
+sits on the lattice site while the other one on the lattice center.
+</P>
+<P>Keyword <I>origin</I> is used to make sure that the surface origin remains
+the same for both elastic stiffness coefficients measurement by
+this fix and subsequent Green's Function molecular dynamics by <A HREF = "fix_gfmd.html">fix gfmd</A>,
+when there are more than one atoms in a surface unit cell and that these atoms
+are not identical to each other.
+</P>
+<P>The unit of the measured elastic stiffness coefficient is
+<A HREF = "units.html">energy/distance^2</A>.
+</P>
+<P>For a restart run where the atoms in the Green's function layer do not sit at their
+equilibrium positions, one would better provide the mapping info via keyword <I>map</I>.
+</P>
+<P><B>Restart, fix_modify, output, run start/stop, minimize info:</B>
+</P>
+<P>No information about this fix is written to <A HREF = "restart.html">binary restart
+files</A>. 
+</P>
+<P>The <A HREF = "fix_modify.html">fix_modify</A> <I>temp</I> option
+is supported by this fix. You can use it to change the 
+temperature compute from thermo_temp to the one that reflects the true
+temperature of atoms in the group.
+</P>
+<P>No global scalar or vector or per-atom
+quantities are stored by this fix for access by various <A HREF = "Section_howto.html#4_15">output
+commands</A>.
+Instead, this fix outputs the initialization information (in which the
+mapping information can be found) and the calculated
+elastic stiffness coefficients into file "prefix".log, where "prefix" will be
+replaced by the prefix given; besides, the
+elastic stiffness coefficients will also be written to file
+"prefix".bin."timestep" in binary format, which could be
+used by <A HREF = "fix_gfmd.html">fix gfmd</A> for Green's functions molecular
+dynamics simulations. At the end of run, these information will also be written.
+</P>
+<P>No parameter of this fix can be used with the <I>start/stop</I> keywords
+of the <A HREF = "run.html">run</A> command.
+</P>
+<P>This fix is not invoked during <A HREF = "minimize.html">energy minimization</A>.
+</P>
+<P><B>Restrictions:</B>
+</P>
+<P>This fix assumes a single layer (or a line for 2D system) of atoms with
+periodical lattice. The temperature of the system
+should not be too high so that the harmonic approximation works.
+</P>
+<P><B>Related commands:</B>
+</P>
+<P><A HREF = "fix_gfmd.html">fix gfmd</A>
+</P>
+<P><B>Note:</B> Compiling of this fix along with LAMMPS requires that 
+the <A HREF = "kspace_style.html">FFT3d wrappers of kspace</A> of LAMMPS is included
+while compiling.
+</P>
+<HR>
+
+<A NAME = "campana"></A>
+
+<P><B>(Campa&ntilde;&aacute;)</B> C. Campa&ntilde;&aacute; and M. H. M&uuml;ser, <I>Practical Green's function approach
+to the simulation of elastic semi-infinite solids</I>, <A HREF = "http://dx.doi.org/10.1103/PhysRevB.74.075420">Phys. Rev. B <B>74</B>, 075420
+(2006)</A>
+</P>
+<A NAME = "kong"></A>
+
+<P><B>(Kong)</B> L.T. Kong, G. Bartels, C. Campa&ntilde;&aacute;, C. Denniston, and Martin H. M&uuml;ser, 
+<I>Implementation of Green's function molecular dynamics: An extension to LAMMPS</I>,
+<A HREF = "http://dx.doi.org/10.1016/j.cpc.2008.12.035">Computer Physics Communications, in press (2009), doi:10.1016/j.cpc.2008.12.035</A>
+</P>
+</HTML>

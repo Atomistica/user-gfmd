@@ -1,0 +1,6 @@
+LJCut {
+  epsilon = "1.0";
+  sigma   = "1.0";
+  cutoff  = "1.75";
+  shift   = "yes";
+};

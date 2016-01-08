@@ -1,0 +1,21 @@
+set encoding iso
+
+set xlabel 'X (\305)'
+set ylabel 'Z (\305)'
+
+set xr [0:79.694]
+set yr [-0.3:0.1]
+set size ratio -100
+
+set ytics 0.05
+
+set format y '%5.2f'
+
+plot '1-GFMD/EAMCu.3000' u 3:5 w p pt 7 ps 2 t 'GFMD',\
+     '2-FullMD/FinalCFG' u 2:4 w p pt 6 ps 2 t 'Full MD'
+
+set term post enha colo 20
+set out 'FinalPosCMP.eps'
+replot
+unset out;set term x11
+replot

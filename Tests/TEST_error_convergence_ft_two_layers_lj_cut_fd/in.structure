@@ -1,0 +1,20 @@
+# Define lattice and create atoms
+variable        nz equal 6
+variable        nndist equal 1.11262
+variable        density equal 4.0/((2*${nndist}/sqrt(2.0))^3)
+variable        invsqrt2 equal 2.0/sqrt(2.0)
+lattice         custom ${density} a1 1 0 0 a2 0 1 0 a3 0.0 0.0 ${invsqrt2} basis 0.25 0.25 0.25 basis 0.75 0.75 0.75
+region          box block 0 8 0 8 -27 17
+create_box      1 box
+region          atoms block INF INF INF INF ${bottom} ${nz}
+create_atoms    1 region atoms
+mass            1 1.0
+
+# This are the two bottommost layers of atoms
+variable        bottomtop equal ${bottom}+0.9
+region          bottom block INF INF INF INF ${bottom} ${bottomtop}
+group           bottom region bottom
+
+# This is the probe atom
+region          probe block 4 4.9 4 4.9 0.0 0.5
+group           probe1 region probe

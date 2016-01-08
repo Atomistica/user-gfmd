@@ -1,0 +1,61 @@
+
+pro generate_datafile
+nx=8d
+ny=8d
+;nz=10d
+nz=7d
+
+
+fs1='(i7,i2,3(f12.6),a)'      
+fs2='(i7,i2,3(f12.6),3(i5),3(f12.6))'
+zs=' 0 0 0 0.0 0.0 0.0'
+
+a=1.11262d * sqrt(2d); 1.556605d; 4.08d ; 1.556605d ; fcc unit cell in units lj or metal
+b=a / sqrt(2d) ; nearest neighbor
+i=1d
+
+;tys1=[2,2,1,1,1,4,3] ; <- nz types ; should match height=2
+;tys2=[2,2,1,1,1,4,3]
+tys1=[2,3,3,3,3,3,3] ; <- nz types
+tys2=[2,3,3,3,3,3,3]
+
+openw, 1, '8gfdatafilelj_12e_hipres' ; '64gfdatafile'
+printf,1, ''
+printf,1, long(nx*ny*nz*2),' atoms'
+printf,1, ''
+;printf,1, '5 atom types'
+printf,1, '4 atom types'
+printf,1, ''
+printf,1, '0.0  ',b*nx,' xlo xhi'
+printf,1, '0.0  ',b*ny,' ylo yhi'
+printf,1, -0.4*a*nz,a*nz*1.3,' zlo zhi'
+printf,1, ''
+printf,1, 'Masses'
+printf,1, ''
+printf,1, '1 1.000000'
+printf,1, '2 1.000000'
+printf,1, '3 1.000000'
+printf,1, '4 1.000000'
+;printf,1, '5 1.000000'
+printf,1, ''
+printf,1, 'Atoms'
+printf,1, ' '
+
+
+
+for x=0d,nx-1 do begin
+  for y=0d,ny-1 do begin
+    printf,1, i,  tys1[0],b*x,     b*y,     a*0,       x,y,1,b*x,    b*y,      a*0,format=fs2
+    printf,1, 1+i,tys2[0],b*x+b/2d,b*y+b/2d,a*0+(a/2d),x,y,0,b*x+b/2d,b*y+b/2d,a*0+(a/2d),format=fs2
+    i += 2d 
+    for z=1d, nz-1 do begin
+      printf,1, i,  tys1[z],b*x,b*y,a*z,zs,format=fs1
+      printf,1, 1+i,tys2[z],b*x+b/2d,b*y+b/2d,a*z+(a/2d),zs,format=fs1
+      i+=2d 
+    end
+  end
+end
+
+close, 1
+end
+; cp -ip Au-Grochola-JCP05.eam.alloy datacube generate_datafile in.melt lsub.pbs ../v7

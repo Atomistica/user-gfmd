@@ -1,0 +1,53 @@
+processors      * * 1
+
+boundary        p p m
+units           lj
+atom_style      gfmd
+atom_modify     sort 0 5.0
+
+#
+# Create GFMD lattice
+#
+
+variable        volume equal (2^(3./2))/2
+variable        density equal 2.0/${volume} #${volume}*(1.5^3)
+lattice         custom ${density} a1 1.0 0.0 0.0 a2 0.0 1.73205080756888 0.0 a3 0.0 0.0 1.63299316185545 basis 0.0 0.0 0.0 basis 0.5 0.5 0.0 basis 0.5 0.166666666666667 0.5 basis 0.0 0.666666666666667 0.5
+region          gf block  0 64  0 37  0 0.5  units lattice
+region          cell block  0 64  0 37  -2 3  units lattice
+create_box      1 cell
+mass            1 1.0
+create_atoms    1 region gf
+
+#
+# GFMD substrate
+#
+
+fix             static_gfmd all gfmd gfmd ft fcc111 1.0 2 pair-potential 1 1.0 height 128 reset_xeq reset_map dumpr_every 1000000
+fix_modify      static_gfmd energy yes
+
+#
+# Sphere
+#
+
+displace_atoms  all move 0.0 0.0 -2.0 units box
+
+fix             sphere all contact/sphere 0 0 100.3 100.0 1.38888888888889 0.890898718140339 1.0
+fix_modify      sphere energy yes
+
+#
+# Output
+#
+
+compute         com all com
+thermo          1000
+thermo_style    custom step fmax fnorm ke pe etotal f_static_gfmd[1] f_static_gfmd[2] f_static_gfmd[3] c_com[1] c_com[2] c_com[3] f_static_gfmd
+thermo_modify   format float "%15.10f" norm no
+
+#
+# Minimize
+#
+
+min_style       cg
+#min_style       fire
+#timestep        0.01
+minimize        0.0 1e-6 1000000 1000000

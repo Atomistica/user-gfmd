@@ -1,0 +1,15 @@
+# Settings for libraries used by specific LAMMPS packages
+# this file is auto-edited when those packages are included/excluded
+
+PKG_INC =   -I../../lib/cuda -DLMP_USER_CUDA 
+PKG_PATH =  -L../../lib/cuda 
+PKG_LIB =   -llammpscuda 
+
+PKG_SYSINC =  $(user-cuda_SYSINC) 
+PKG_SYSLIB =  $(user-cuda_SYSLIB) 
+PKG_SYSPATH = $(user-cuda_SYSPATH) 
+
+# TAS needs to manually comment these in and out for USER-CUDA
+include ../../lib/cuda/Makefile.common
+include ../../lib/cuda/Makefile.lammps
+

@@ -1,0 +1,58 @@
+boundary      p p m
+units         lj
+atom_modify   sort 0 1.0
+
+lattice       sc 1.0
+region        cell block  0 10  0 10  0 1
+create_box    1 cell
+mass          1 1.0
+create_atoms  1 box
+
+displace_atoms  all move 0.0 0.0 4.0 units box
+
+
+#
+# No interaction
+#
+pair_style    none
+
+
+#
+# Rigid surface
+#
+fix           rigid all contact/map input64.matrix 2.0 1 lj126 1.0 1.0 -1.0
+#fix           rigid all contact/map input64.matrix 2.0 1 lj126 100.0 1.0 2.0
+fix_modify    rigid energy yes
+
+
+#
+# Screen output
+#
+thermo        100
+thermo_style  custom step temp ke pe etotal
+thermo_modify format float "%14.8f" norm no
+
+
+#
+# Langevin
+#
+fix           nve all nve
+fix           langevin all langevin 0.2 0.2 0.01 234342
+
+
+#
+# Run simulation
+#
+run           10000
+
+#
+# Remove Langevin
+#
+unfix         langevin
+
+#
+# Run again
+#
+run           100000
+
+write_restart restart

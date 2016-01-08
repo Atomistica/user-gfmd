@@ -1,0 +1,62 @@
+processors      1 1 1
+
+boundary        p p m
+units           lj
+atom_style      gfmd
+atom_modify     sort 0 1.0
+
+
+#
+# Create GFMD lattice
+#
+
+variable        sqrt2 equal sqrt(2.0)
+
+lattice         custom ${sqrt2}  a1 1 0 0  a2 0 1 0  a3 0 0 ${sqrt2}  basis 0.25 0.25 0.25  basis 0.75 0.75 0.75
+region          cell block  0 10  0 10  0 1  units lattice
+create_box      1 cell
+mass            1 1.0
+create_atoms    1 box
+
+velocity        all     set  0.1 0.0 0.0
+
+
+#
+# GFMD substrate
+#
+
+fix             static_gfmd all gfmd gfmd ft fcc100 1.0 2 pair-potential 2 1.0 -0.1 height 10 reset_xeq reset_map
+fix_modify      static_gfmd energy yes
+
+
+#
+# Random displacements
+#
+
+#displace_atoms   all move -0.1 -0.1 0.0 units box
+
+#displace_atoms  all move -0.5 -0.5 -0.5 units box
+displace_atoms  all random 0.1 0.1 0.1 12472634
+#displace_atoms  all move 0.5 0.5 0.5 units box
+
+
+#
+# Output
+#
+
+compute         com all com
+thermo          1000
+thermo_style    custom step ke pe etotal f_static_gfmd[1] f_static_gfmd[2] f_static_gfmd[3] c_com[1] c_com[2] c_com[3]
+thermo_modify   format float "%15.10f" norm no
+
+#dump            xyz all xyz 1000 traj.xyz
+
+
+#
+# Molecular dynamics
+#
+fix             nve all nve
+timestep        0.01
+run             100000
+
+#write_restart   restart

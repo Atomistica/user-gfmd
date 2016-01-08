@@ -1,0 +1,47 @@
+# Full atom MD for 2+1 D Cu block simulation
+boundary     p p fs
+units		    metal
+atom_style   atomic
+
+# read in initial geometry
+read_data    data.pos
+
+# define group
+group        upper  id > 44928
+group        bottom id < 1153
+
+# EAM potential
+pair_style   eam
+pair_coeff   * * cuu3.eam
+
+# Atomic property
+mass         1 63.55
+
+# Set variables for Langevin thermostat
+variable     r equal 471081
+variable     t equal 0
+variable     d equal 1
+# 
+neighbor     4.0 nsq 
+
+#
+fix          1 all langevin $t $t $d $r
+fix          2 all nve
+
+# Add indenter
+fix          3 bottom indent 1e4 cylinder y 39.8 -499.999 500 units box
+fix_modify   3 energy yes
+# Apply extra load on top; it will give the same result if added on bottom
+# at the same time, the topmost layer is kept in the same plane
+fix          4 upper aveforce NULL NULL -0.01
+
+# Thermo output
+thermo       50
+thermo_style custom step temp ke f_3 etotal
+
+# Dump trajectory and bottom info to visualize 
+dump         1 all atom 500 dump3D.lammpstrj
+dump         2 bottom custom 200 bottom.dump id x y z fx fy fz
+
+# 20000 should be enough to equilibrate
+run          20000

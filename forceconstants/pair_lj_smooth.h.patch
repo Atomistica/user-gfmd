@@ -1,0 +1,14 @@
+diff --git a/src/pair_lj_smooth.h b/src/pair_lj_smooth.h
+index 35d1374..0c9f77e 100644
+--- a/src/pair_lj_smooth.h
++++ b/src/pair_lj_smooth.h
+@@ -40,7 +40,8 @@ class PairLJSmooth : public Pair {
+   void write_data_all(FILE *);
+   double single(int, int, int, int, double, double, double, double &);
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
+   double cut_inner_global,cut_global;
+   double **cut,**cut_inner,**cut_inner_sq;
+   double **epsilon,**sigma;

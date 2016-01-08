@@ -1,0 +1,67 @@
+processors      1 1 1
+
+boundary        p p m
+units           lj
+atom_style      gfmd
+atom_modify     sort 0 1.0
+
+
+#
+# Create GFMD lattice
+#
+lattice         sc 1.0
+region          cell block     0 10  0 10  0 2
+region          topcell block  0 10  0 10  0 1
+create_box      1 cell
+mass            1 1.0
+create_atoms    1 box
+
+group           topcell region topcell
+displace_atoms  topcell move 0.5  0.5  0.0  units box
+displace_atoms  all     move 0.25 0.25 0.25 units box
+
+
+#
+# GFMD substrate
+#
+fix             static_gfmd all gfmd/static gfmd fcc100 2 1.0 0.0 reset_xeq reset_map
+fix_modify      static_gfmd energy yes
+
+
+#
+# Move atoms to the top
+#
+displace_atoms  all     move 0.0  0.0  1.0  units box
+
+
+#
+# Rigid wall
+#
+fix             wall all wall/lj93 zlo EDGE 1.0 1.0 0.858374218932557
+fix_modify      wall energy yes
+
+
+#
+# Apply force
+#
+fix             force all addforce 0.0 0.0 -0.01
+fix_modify      force energy yes
+
+
+#
+# Output
+#
+compute         com all com
+thermo          1000
+thermo_style    custom step ke pe etotal fmax fnorm f_static_gfmd[3] f_wall[1] c_com[3]
+thermo_modify   format float "%15.10f" norm no
+
+
+#
+# Minimize
+#
+min_style       cg
+min_modify      line quadratic dmax 0.001
+#min_style        fire
+#timestep         0.1
+minimize        0.0 1e-8 1000000 10000000

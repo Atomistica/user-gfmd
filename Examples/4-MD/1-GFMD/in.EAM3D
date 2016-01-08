@@ -1,0 +1,43 @@
+# GFMD for 2+1 D Cu block simulation
+boundary     p p m
+units		    metal
+atom_style   atomic
+
+# read in initial geometry
+read_data    data.pos
+
+# define group
+group        GFLayer type 1
+
+# No potential is necessary here
+pair_style   none
+
+# Atomic property
+mass         1 63.55
+
+# Set variables for Langevin thermostat
+variable     r equal 471081
+variable     t equal 0.
+variable     d equal 0.15
+# 
+neighbor     2.0 nsq 
+
+# Apply Green's function method on gfmdlayer
+fix          1 GFLayer gfmd EAMCu 2 GFC.bin su 4.42745271 0.0 sv 0 2.55619101 load -0.01 output 10000
+
+fix          2 GFLayer langevin $t $t $d $r
+fix          3 GFLayer nve
+
+# Add indenter
+fix          4 GFLayer indent 1e4 cylinder y 39.8 -499.999 500 units box
+fix_modify   4 energy yes
+
+# Thermo output
+thermo       30
+thermo_style custom step temp ke pe f_4 etotal pxx pyy pzz pxy pxz pyz
+
+# Dump trajectory to visualize 
+dump         4 GFLayer atom 100 dump3D.lammpstrj
+
+# 3000 should be enough to equilibrate
+run          3000

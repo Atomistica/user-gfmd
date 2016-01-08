@@ -1,0 +1,64 @@
+
+
+ Table of future work
+
+Date     Priority Contributor ProblemName
+
+20150109 Medium    PAS        Remove requirement for xeq and map in LAMMPS data file; warn upon restart pitfalls
+  Initial runs should be run with reset_xeq reset_map flags, restarts with just reset_map. reset_map should become default because it is virtually always needed. We should then also eliminate the need to put the map into the LAMMPS data file (but could keep it as an option). There should be an additional warning if reset_xeq is enabled on restart.
+
+20130801 Low       TAS        GFMD+RUN in scalingtest lj1nn
+  Running with a single plane of GFMD atoms, and using a "run" command, crashes.  Long initialization time and seg fault.  I see that maxneed in comm.cpp, instead of being 1 or 2, is 176.  This may be because the cut off range exceeds the system height.  scalingtest/lj1nn/ shows this problem, even when the system is laterally large (32 atoms).
+
+20130801 Medium    TAS        GFMD+CUDA inconsistent result
+  Getting inconsistent results in the scalingtest/ runs when cuda is enabled.  replacing minimization calls with "fix firefix all fire" should allow an input script to run with cuda, as called by "mpirun ./lmp_cudafire -sf cuda".
+
+20131007 Medium    TAS	      Crash on reading minimization file
+  Noticed that a run crashed when reading a multiple-proc data file.  Change_box had been used on the file, and was used again after the restart file was read.  Further info may be available at /roughonrough/8layerflat_commh5b/nonadhesiveeam/np96/continue/posterity.  hhpc109:1.0.Received 1 out-of-context eager message(s) from stray process PID=13391 running on host 172.20.1.110 (LID 0x1b3, ptype=0x1, subop=0x22, elapsed=0.090s)  (err=49). [hhpc058:15847] *** An error occurred in MPI_Sendrecv [hhpc058:15847] *** on communicator MPI_COMM_WORLD mpirun has exited due to process rank 90 with PID 15849 on...58
+
+20131031 Low       TAS        Convergence documentation tip
+  If the stiffness of explicit interactions (force from an atom per area of an atom) is much different from the modulus passed to fix_gfmd, then minimizations will not converge. This can be seen probably by changing the scalingtest/lj1nn run to have 0.000001 gfmd stiffness.  Shold be in some trouble-shotting documentation.
+
+20131127 Medium    TAS        Possible stability issue, perhaps with change_box.cpp
+  Some further robustness testing is required here: I believe sometimes GFMD crashes.  The number of processors (4-16) and the use of patched change_box.cpp may contribute.  /scratch0/gpumaster/tsharp/roughonrough/8layerflat_commh5b/10percent_smart_eamplastic/save/ contains the run that sometimes seems to crash of hang.
+
+20131205 Low       TAS        Consider seeing if possible to simplify structure/names/file locations of functions
+  get_stiffness_matrix(nx,ny,...) seems to be an unneeded empty wrapper for get_stiffness_matrix(...).  Choosing what functions go into fix_gfmd.cpp vs gfmd_misc or surface_stiffness or gfmd_solver. Ex: currently, get_per_layer_dyanmical<-get_dynamical<-getstiffness<-getstiffness<-fill_phi_buffer<-solver_static.set_kernel<-fix_gfmd.init.
+
+20140207 Medium    TAS        Creating GFMD atoms with lattice and create_atoms works great.  Then, if a restart file is written, and read-in again, there is an error that "ERROR: fix gfmd: number of atoms per unit cell from stiffness kernel (= 1) and input file (= 0) differ."
+
+20140226 Low       TAS        LAMMPS seems to have capital class names, instance of the object be the same name with lower case.  Other observations: _factory for pointers to the objects, defined in files with that name, and child class names are parent class names with additional adjectives.  Input command strings to be subsectioned for nicer reading and error checking.
+
+20140521 Low       TAS        The optional fire_fix_cuda requires that /lib/cuda/liblammps.a was compiled with velocities in double, not single float.  Should be in documentation or more general allowed.
+
+20140915 Low       TAS        GFMD/cuda has a 2% force error problem in the first time step of a second "run" command.  Thermo output of timestep 100 in a energy-minimizing-run might say fnorm=1e-3.  The next run command will output timestep 100 again, but now fnorm might say 1e0!  The atom positions have not changed in cpu's atom->x.  It looks like it hasn't changed in gpu's copies of that either: data, grid, dev_u_xy... etc.  But GFMD's force=stiffness * displacement in q-space shows that displacement(q=65) is different even though nothing physical in the system has changed.  Pointer arithmetic error?  Pointer type error from the static_cast?  FFT buffer non zero?  GFMD pointer to cuda's xvalues doesnt get updated?
+
+20140923 Low       TAS        fix_fire.cpp has a bug whereby it does not converge as quickly as min_fire.cpp.  fix_fire_cuda.cpp does not have this problem.  
+
+20140923 Med       TAS        I included a compile-time error in the recent code commit; so the user will correct the wrong hardcoded number.  I need to fix this.
+
+20140923 Med       TAS        GFMD's gid array of grid indices now allows bigints.  The cuda files will need to be upgraded presumably.
+
+20141210 Med       TAS        If running on GPU, the dumped forces correspond to the wrong atoms if the center-of-mass has shifted from the initial grid.  (Define fix gfmd. Run. Create dump. Run 0.)  Observed in my folder "revealsubgridforces".
+
+20150208 Low       TAS        Ignore this line; testing git.
+
+XXXXXXXX XXXX      XXX        XXXXXXXXXXXXXXXXXXXXXXXXX
+  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+XXXXXXXX XXXX      XXX        XXXXXXXXXXXXXXXXXXXXXXXXX
+  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+XXXXXXXX XXXX      XXX        XXXXXXXXXXXXXXXXXXXXXXXXX
+  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+-------------------------------------------------------------------------------------
+
+20140623 Resolved
+20140521 High     TAS         Repeated fix_gfmd unfix_gfmd does not free up all the memory used causing slowdown and node crash!
+  The problem was especially evident in a ~2D simulation maybe because one dimension was so large Lx=4096 and Ly=2.
+
+2014 Resolved                 LP's sweeping additions saved the day and accomplished this.
+20131205 Low       TAS        Consider separating lattice from interaction type in surface_stiffness
+  At the same time as considering the other 20131205 change, consider breaking up the fcc100ft_stiffness.cpp and similar files to avoid redefinitions of numerical transforms on the lattice.
+

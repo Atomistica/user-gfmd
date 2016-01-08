@@ -1,0 +1,60 @@
+# 2D LJ simulation
+dimension      2
+boundary       p f p
+units          lj
+atom_style     atomic
+
+# Lattice geometry
+read_data      data.pos
+
+#define groups
+group          upper  type 1
+group          slab   type 2
+group          bottom type 3
+
+# Lennard-Jones interactions
+pair_style     lj/cut 2.5
+pair_coeff     * * 1.0 1.0 2.5
+
+# masses
+mass           1 1.0
+mass           2 1.0
+mass           3 1.0
+
+# Exclude interactions between atoms in fixed group upper
+neighbor       0.5 nsq
+
+#Langevin random seed, temperature and damping variable
+variable       r equal 23827
+variable       t equal 0.01
+variable       d equal 0.1
+
+# initial velocities and temperature control
+compute        MyTemp all temp/partial 1 1 0
+compute        MyPres all pressure MyTemp
+velocity       all create $t 4713 mom yes rot yes dist gaussian temp MyTemp
+
+# define fixes
+fix            1 all langevin $t $t $d $r
+fix_modify     1 temp MyTemp
+fix            2 all nve
+# Elastic stiffness coefficients measurement, 1 atom per unit cell
+fix            3 bottom gfc 20 100000 1000000 LJ2D_prim su 1.11321 0
+fix_modify     3 temp MyTemp
+# complex lattice with 2 atoms per unit cell, for comparison only
+fix            4 bottom gfc 20 100000 1000000 LJ2D_comp su 2.22642 0
+fix_modify     4 temp MyTemp
+# Ensure 2D simulation
+fix            5 all enforce2d
+
+# Customize thermo output
+thermo         10000
+thermo_style   custom step temp pe ke etotal press pxx pyy pxy press
+thermo_modify  press MyPres temp MyTemp
+
+# write snapshot every 1000th timestep in "LAMMPS" format.
+# This file can be read in with VMD and viewed as a movie
+dump           1 all atom 50000 dump2D_GFC.lammpstrj 
+
+# run for these many timesteps
+run 	         11000000

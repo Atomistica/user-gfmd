@@ -1,0 +1,36 @@
+--- atom.cpp	2015-11-16 15:07:07.058303777 -0500
++++ atom.cpp.orig	2015-11-16 15:06:50.421768896 -0500
+@@ -74,6 +74,8 @@
+   type = mask = NULL;
+   image = NULL;
+   x = v = f = NULL;
++  gid = NULL;
++  xeq = NULL;
+ 
+   molecule = NULL;
+   molindex = molatom = NULL;
+@@ -170,6 +172,7 @@
+   eff_plastic_strain_rate_flag = 0;
+   damage_flag = 0;
+ 
++  gfmd_flag = 0;
+   // Peridynamic scale factor
+ 
+   pdscale = 1.0;
+@@ -229,6 +232,8 @@
+   memory->destroy(x);
+   memory->destroy(v);
+   memory->destroy(f);
++  memory->destroy(gid);
++  memory->destroy(xeq);
+ 
+   memory->destroy(molecule);
+   memory->destroy(molindex);
+@@ -386,6 +391,7 @@
+ 
+   rho_flag = e_flag = cv_flag = vest_flag = 0;
+ 
++  gfmd_flag = 0;
+   // create instance of AtomVec
+   // use grow() to initialize atom-based arrays to length 1
+   //   so that x[0][0] can always be referenced even if proc has no atoms

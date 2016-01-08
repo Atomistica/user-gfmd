@@ -1,0 +1,37 @@
+boundary          p p m
+units             lj
+atom_modify       sort 0 1.0
+
+lattice           sc 10.0
+region            cell block  0 1  0 1  0 1
+create_box        1 cell
+mass              1 1.0
+create_atoms      1 box
+
+variable          nsteps equal 3000
+variable          x0 equal -0.5
+variable          step equal 0.001
+
+displace_atoms    all move 0.0 0.0 0.5 units box
+
+pair_style        none
+
+fix               rigid all contact/map flat 1.0 1 exp 1.0 1.0 2.0
+fix_modify        rigid energy yes
+
+variable          x equal ${x0}
+compute           force all reduce sum fz
+thermo            100
+thermo_style      custom step v_x pe f_rigid[3] c_force
+thermo_modify     format float "%14.8f" norm no
+
+label loop
+variable i loop 1 ${nsteps}
+
+  displace_atoms  all move 0.0 0.0 ${step} units box
+  variable        x equal ${x0}+$i*${step}
+  run             1
+
+next i
+jump SELF loop
+

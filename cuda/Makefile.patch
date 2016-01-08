@@ -1,0 +1,17 @@
+Index: Makefile
+===================================================================
+--- Makefile	(revision 11945)
++++ Makefile	(working copy)
+@@ -7,9 +7,10 @@
+ 
+ ROOT =	lmp
+ EXE =	$(ROOT)_$@
+-SRC =	$(wildcard *.cpp)
++SRC =	$(wildcard *.cpp) $(wildcard *.cu)
+ INC =	$(wildcard *.h)
+-OBJ = 	$(SRC:.cpp=.o)
++OBJ1 = 	$(SRC:.cu=.o)
++OBJ = $(OBJ1:.cpp=.o)
+ 
+ # Package variables
+ 

@@ -1,0 +1,6 @@
+Comparison of GFMD and Full atom MD: Cu(111) against a cylinder indenter
+
+1-GFMD   : Illustrates the use of GFMD
+2-FullMD : full atom MD
+plot.cmp : Gnuplot script to compare the final position of the bottom
+           layer in contact with the indenter by GFMD and full atom MD.

@@ -1,0 +1,23 @@
+Example to measure the elastic stiffness coefficient for Cu(111) with EAM potential
+by using FixGFC
+
+Input files:
+	1) in.EAM3D               : LAMMPS script
+   2) data.pos               : Atomic configuration
+   3) cuu3.eam               : EAM Potential for Cu
+Output files:
+   1) log.lammps.24Jul2009   : log file of LAMMPS
+   2) EAMCu111.log           : log files of FixGFC
+   3) EAMCu111.bin.150000000 : binary Elastic Stiffness Coefficients files
+
+Other files:
+   1) plot.scr               : script to extract Phi-q relation figure
+   2) disp.eam3d             : Phi-q data for selected lines in the Brillouin zone
+   3) Phi_q_EAM3D.eps        : Phi-q figure
+
+To run this example, just invoke
+  mpirun -np 2 lmp -in in.EAM3D -screen none &
+or 
+  lmp -in in.EAM3D -screen none &
+
+It takes about 34 hours with four 2.4 GHz processors.

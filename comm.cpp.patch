@@ -1,0 +1,28 @@
+--- comm.cpp.orig	2013-08-14 15:57:55.735546172 -0400
++++ comm.cpp	2013-08-23 10:48:06.616894922 -0400
+@@ -1199,10 +1199,10 @@
+ 
+     if (sendproc[iswap] != me) {
+       if (recvnum[iswap])
+-        MPI_Irecv(buf_recv,n*recvnum[iswap],MPI_DOUBLE,recvproc[iswap],0,
++        MPI_Irecv(buf_recv,maxrecv,MPI_DOUBLE,recvproc[iswap],0,
+                   world,&request);
+       if (sendnum[iswap])
+-        MPI_Send(buf_send,n*sendnum[iswap],MPI_DOUBLE,sendproc[iswap],0,world);
++        MPI_Send(buf_send,n,MPI_DOUBLE,sendproc[iswap],0,world);
+       if (recvnum[iswap]) MPI_Wait(&request,&status);
+       buf = buf_recv;
+     } else buf = buf_send;
+@@ -1236,10 +1236,10 @@
+ 
+     if (sendproc[iswap] != me) {
+       if (sendnum[iswap])
+-        MPI_Irecv(buf_recv,n*sendnum[iswap],MPI_DOUBLE,sendproc[iswap],0,
++        MPI_Irecv(buf_recv,maxrecv,MPI_DOUBLE,sendproc[iswap],0,
+                   world,&request);
+       if (recvnum[iswap])
+-        MPI_Send(buf_send,n*recvnum[iswap],MPI_DOUBLE,recvproc[iswap],0,world);
++        MPI_Send(buf_send,n,MPI_DOUBLE,recvproc[iswap],0,world);
+       if (sendnum[iswap]) MPI_Wait(&request,&status);
+       buf = buf_recv;
+     } else buf = buf_send;

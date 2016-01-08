@@ -1,0 +1,15 @@
+Example of Full atom MD: Cu(111) against a cylinder indenter
+
+Input files:
+   1) cuu3.eam               : EAM potential for Cu
+   2) in.EAM3D               : script for LAMMPS
+   3) data.pos               : initial configuration
+Output files:
+   1) log.lammps.17May2008   : LAMMPS log file
+Other files:
+   1) FinalCFG               : Final configuration of bottom layer
+                               ("tail -1152 bottom.dump" will get the data in this file)
+
+To run this example, just invoke
+lmp -in in.EAM3D -screen none &
+It will take about 1.2 hours on a 2.4 GHz single processor.

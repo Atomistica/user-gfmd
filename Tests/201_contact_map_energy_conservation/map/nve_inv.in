@@ -1,0 +1,38 @@
+boundary      p p m
+units         lj
+atom_modify   sort 0 1.0
+
+read_restart  restart
+
+#
+# No interaction
+#
+pair_style    none
+
+
+#
+# Rigid surface
+#
+fix           rigid all contact/map input64.matrix 6.0 -1 lj93 0.351364184463153 1.16499305075071 -1.0 # k = 10, r0 = 1
+fix_modify    rigid energy yes
+
+
+#
+# Screen output
+#
+thermo        100
+thermo_style  custom step temp ke pe etotal
+thermo_modify format float "%14.8f" norm no
+
+
+#
+# NVE integrator
+#
+fix           nve all nve
+
+
+#
+# Run simulation
+#
+run           100000
+

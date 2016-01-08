@@ -1,0 +1,747 @@
+
+units		metal
+boundary        p p f
+processors      1 1 1
+atom_style	atomic
+newton          off
+
+read_data       fulldatafile_MINUSONE
+  orthogonal box = (0 0 -8.976) to (14.425 14.425 69.368)
+  1 by 1 by 1 MPI processor grid
+  575 atoms
+
+variable lj_to_metal equal 2.5702 # = (Au cell)/(LJ nn cell)= (4.08 nm)/(2^1/6 * 2^1/2 sigma)
+variable rcut_interface equal 1.1224620483*${lj_to_metal}
+variable rcut_interface equal 1.1224620483*2.5701999999999998181
+
+variable rcut_expand equal ${rcut_interface}+4.0
+variable rcut_expand equal 2.8849519565406600563+4.0
+
+pair_style hybrid eam/alloy lj/expand ${rcut_interface}
+pair_style hybrid eam/alloy lj/expand 2.8849519565406600563
+pair_coeff   * * eam/alloy Au-Grochola-JCP05.eam.alloy Au Au NULL Au
+pair_coeff   1 3 lj/expand    0.0 ${lj_to_metal} 0.0 ${rcut_interface}
+pair_coeff   1 3 lj/expand    0.0 2.5701999999999998181 0.0 ${rcut_interface}
+pair_coeff   1 3 lj/expand    0.0 2.5701999999999998181 0.0 2.8849519565406600563
+pair_coeff   2 3 lj/expand    0.0 ${lj_to_metal} 0.0 ${rcut_interface}
+pair_coeff   2 3 lj/expand    0.0 2.5701999999999998181 0.0 ${rcut_interface}
+pair_coeff   2 3 lj/expand    0.0 2.5701999999999998181 0.0 2.8849519565406600563
+pair_coeff   3 3 lj/expand    0.0 ${lj_to_metal} 0.0 ${rcut_interface}
+pair_coeff   3 3 lj/expand    0.0 2.5701999999999998181 0.0 ${rcut_interface}
+pair_coeff   3 3 lj/expand    0.0 2.5701999999999998181 0.0 2.8849519565406600563
+pair_coeff   3 4 lj/expand    0.0 ${lj_to_metal} 4.0 ${rcut_interface} #expand to decrease corrugation # disabled
+pair_coeff   3 4 lj/expand    0.0 2.5701999999999998181 4.0 ${rcut_interface} 
+pair_coeff   3 4 lj/expand    0.0 2.5701999999999998181 4.0 2.8849519565406600563 
+pair_modify	shift yes
+
+
+neighbor        4.0 bin
+neigh_modify    every 1 delay 0 check yes
+group           rbgroup type 3
+50 atoms in group rbgroup
+group           gfmdgroup type 2
+50 atoms in group gfmdgroup
+group           type4 type 4
+50 atoms in group type4
+region          columnregion1 block 0.5 4.6 0.5 4.6 INF INF units box
+region          columnregion2 block 2.6 6.7 4.6 6.7 INF INF units box
+group           col1group region columnregion1
+59 atoms in group col1group
+group           col2group region columnregion2
+22 atoms in group col2group
+group           columns union col1group col2group
+81 atoms in group columns
+group           probe intersect columns type4
+7 atoms in group probe
+
+
+fix             bottomfix gfmdgroup setforce 0.0 0.0 0.0
+
+thermo		500
+
+
+
+
+
+dump 3 all image 10 aimag.full.*.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump_modify 3 backcolor white amap -1.0 1.0 ca 0.0 4 min red 0.0 black 0.000001 navy max blue
+dump_modify 3 pad 4
+
+# initialize for pushing
+min_style cg
+min_modify dmax 0.3*${lj_to_metal} line quadratic
+min_modify dmax 0.3*2.5701999999999998181 line quadratic
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 3.61045 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0            0   -1854.1031            0   -1854.1031   -13124.186 
+     105            0   -1856.4862            0   -1856.4862   -2824.0043 
+Loop time of 0.908707 on 1 procs for 105 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1854.10312855     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 4.47007 8.65616e-07
+  Force max component initial, final = 0.74542 1.36586e-07
+  Final line search alpha, max atom move = 1 1.36586e-07
+  Iterations, force evaluations = 105 210
+
+Pair  time (%) = 0.42333 (46.586)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 0.00349641 (0.384767)
+Outpt time (%) = 0.435607 (47.937)
+Other time (%) = 0.0462735 (5.09223)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76442 ave 76442 max 76442 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76442
+Ave neighs/atom = 132.943
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style hftn
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 4.57862 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     105            0   -1856.4862            0   -1856.4862   -2824.0043 
+Loop time of 0.00233388 on 1 procs for 0 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 8.65616e-07 8.65616e-07
+  Force max component initial, final = 1.36586e-07 1.36586e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 0 0
+
+Pair  time (%) = 0.00230908 (98.9376)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 1.50204e-05 (0.64358)
+Outpt time (%) = 0 (0)
+Other time (%) = 9.77516e-06 (0.418837)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style fire
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 2.88433 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     105            0   -1856.4862            0   -1856.4862   -2824.0043 
+     106 6.6424688e-25   -1856.4862            0   -1856.4862   -2824.0043 
+Loop time of 0.046241 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 8.65616e-07 8.65616e-07
+  Force max component initial, final = 1.36586e-07 1.36586e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+Pair  time (%) = 0.00430894 (9.31843)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 4.22001e-05 (0.0912611)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0418899 (90.5903)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+
+#variable rbminht equal bound(rbgroup,zmin)
+#variable ebmaxht equal bound(type4,zmax)
+#variable ebrboverlap equal ${ebmaxht}-${rbminht}+${rcut_expand}-0.3075 # 0.3075 for expand of 4.0
+#displace_atoms  rbgroup move 0.01 0.0 ${ebrboverlap} units box # break symmetry
+
+# apply these after surface relaxes
+fix             2      probe setforce 0.0 0.0 0.0
+fix_modify      2      energy no
+fix             fixID1 probe aveforce 0.0 0.0 0.0
+fix_modify      fixID1 energy no
+
+variable n loop 0 3
+label nloop
+
+undump 3
+dump 3 all image 10 aimag.full.*.${n}.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump 3 all image 10 aimag.full.*.0.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump_modify 3 backcolor white amap -1.0 1.0 ca 0.0 4 min red 0.0 black 0.000001 navy max blue
+dump_modify 3 pad 4
+
+if "$n < 3"  then "variable dstep equal 0.0" else "variable dstep equal -1.6"
+variable dstep equal 0.0
+
+
+
+#displace_atoms rbgroup move 0 0 ${dstep} units box
+#displace_atoms rbgroup move 0 ${dstep} ${dstep} units box
+displace_atoms probe move 0 0 ${dstep} units box
+displace_atoms probe move 0 0 0 units box
+
+min_style cg
+min_modify dmax 0.3*${lj_to_metal} line quadratic
+min_modify dmax 0.3*2.5701999999999998181 line quadratic
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 3.44032 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     106 6.6424688e-25   -1856.4862            0   -1856.4862   -2824.0043 
+     107 6.6424688e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.059237 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 8.43891e-07 7.20106e-07
+  Force max component initial, final = 1.36586e-07 1.23404e-07
+  Final line search alpha, max atom move = 1 1.23404e-07
+  Iterations, force evaluations = 1 2
+
+Pair  time (%) = 0.00628281 (10.6062)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 4.57764e-05 (0.0772766)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0529084 (89.3165)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style hftn
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 4.57862 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     107 6.6424688e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.00231981 on 1 procs for 0 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 7.20106e-07 7.20106e-07
+  Force max component initial, final = 1.23404e-07 1.23404e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 0 0
+
+Pair  time (%) = 0.00229192 (98.7975)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 1.5974e-05 (0.688592)
+Outpt time (%) = 0 (0)
+Other time (%) = 1.19209e-05 (0.513875)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style fire
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 2.88433 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     107            0   -1856.4862            0   -1856.4862   -2824.0041 
+     108 4.596967e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.0451839 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 7.20106e-07 7.20106e-07
+  Force max component initial, final = 1.23404e-07 1.23404e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+Pair  time (%) = 0.00427794 (9.46785)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 3.00407e-05 (0.0664855)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0408759 (90.4657)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+
+
+#dump            dumpid type4 custom 1 dump.melt.*.ljfull x y z fx fy fz
+#run 0
+#undump          dumpid
+
+next n
+jump SELF nloop
+
+undump 3
+dump 3 all image 10 aimag.full.*.${n}.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump 3 all image 10 aimag.full.*.1.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump_modify 3 backcolor white amap -1.0 1.0 ca 0.0 4 min red 0.0 black 0.000001 navy max blue
+dump_modify 3 pad 4
+
+if "$n < 3"  then "variable dstep equal 0.0" else "variable dstep equal -1.6"
+variable dstep equal 0.0
+
+
+
+#displace_atoms rbgroup move 0 0 ${dstep} units box
+#displace_atoms rbgroup move 0 ${dstep} ${dstep} units box
+displace_atoms probe move 0 0 ${dstep} units box
+displace_atoms probe move 0 0 0 units box
+
+min_style cg
+min_modify dmax 0.3*${lj_to_metal} line quadratic
+min_modify dmax 0.3*2.5701999999999998181 line quadratic
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 3.44032 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     108 4.596967e-25   -1856.4862            0   -1856.4862   -2824.0041 
+     109 4.596967e-25   -1856.4862            0   -1856.4862   -2824.0042 
+Loop time of 0.05777 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 7.20106e-07 5.45405e-07
+  Force max component initial, final = 1.23404e-07 8.22413e-08
+  Final line search alpha, max atom move = 1 8.22413e-08
+  Iterations, force evaluations = 1 2
+
+Pair  time (%) = 0.00650787 (11.2651)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 4.45843e-05 (0.0771755)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0512176 (88.6577)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style hftn
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 4.57862 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     109 4.596967e-25   -1856.4862            0   -1856.4862   -2824.0042 
+Loop time of 0.00232697 on 1 procs for 0 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 5.45405e-07 5.45405e-07
+  Force max component initial, final = 8.22413e-08 8.22413e-08
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 0 0
+
+Pair  time (%) = 0.00229883 (98.791)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 1.5974e-05 (0.686475)
+Outpt time (%) = 0 (0)
+Other time (%) = 1.21593e-05 (0.522541)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style fire
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 2.88433 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     109            0   -1856.4862            0   -1856.4862   -2824.0042 
+     110 2.6370426e-25   -1856.4862            0   -1856.4862   -2824.0042 
+Loop time of 0.0456212 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 5.45405e-07 5.45405e-07
+  Force max component initial, final = 8.22413e-08 8.22413e-08
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+Pair  time (%) = 0.00458097 (10.0413)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 3.09944e-05 (0.0679387)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0410092 (89.8907)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+
+
+#dump            dumpid type4 custom 1 dump.melt.*.ljfull x y z fx fy fz
+#run 0
+#undump          dumpid
+
+next n
+jump SELF nloop
+
+undump 3
+dump 3 all image 10 aimag.full.*.${n}.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump 3 all image 10 aimag.full.*.2.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump_modify 3 backcolor white amap -1.0 1.0 ca 0.0 4 min red 0.0 black 0.000001 navy max blue
+dump_modify 3 pad 4
+
+if "$n < 3"  then "variable dstep equal 0.0" else "variable dstep equal -1.6"
+variable dstep equal 0.0
+
+
+
+#displace_atoms rbgroup move 0 0 ${dstep} units box
+#displace_atoms rbgroup move 0 ${dstep} ${dstep} units box
+displace_atoms probe move 0 0 ${dstep} units box
+displace_atoms probe move 0 0 0 units box
+
+min_style cg
+min_modify dmax 0.3*${lj_to_metal} line quadratic
+min_modify dmax 0.3*2.5701999999999998181 line quadratic
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 3.61045 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     110 2.6370426e-25   -1856.4862            0   -1856.4862   -2824.0042 
+     111 2.6370426e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.0472369 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 5.45405e-07 5.15346e-07
+  Force max component initial, final = 8.22413e-08 9.53203e-08
+  Final line search alpha, max atom move = 1 9.53203e-08
+  Iterations, force evaluations = 1 2
+
+Pair  time (%) = 0.00638485 (13.5167)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 6.27041e-05 (0.132744)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0407894 (86.3506)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style hftn
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 4.57862 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     111 2.6370426e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.00232387 on 1 procs for 0 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 5.15346e-07 5.15346e-07
+  Force max component initial, final = 9.53203e-08 9.53203e-08
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 0 0
+
+Pair  time (%) = 0.00229216 (98.6355)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 1.5974e-05 (0.687391)
+Outpt time (%) = 0 (0)
+Other time (%) = 1.57356e-05 (0.677131)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style fire
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 2.88433 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     111            0   -1856.4862            0   -1856.4862   -2824.0041 
+     112 2.3543761e-25   -1856.4862            0   -1856.4862   -2824.0041 
+Loop time of 0.045336 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1856.48620376     -1856.48620376     -1856.48620376
+  Force two-norm initial, final = 5.15346e-07 5.15346e-07
+  Force max component initial, final = 9.53203e-08 9.53203e-08
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+Pair  time (%) = 0.0042851 (9.45186)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 2.90871e-05 (0.0641589)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0410218 (90.484)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    76912 ave 76912 max 76912 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 76912
+Ave neighs/atom = 133.76
+Neighbor list builds = 0
+Dangerous builds = 0
+
+
+#dump            dumpid type4 custom 1 dump.melt.*.ljfull x y z fx fy fz
+#run 0
+#undump          dumpid
+
+next n
+jump SELF nloop
+
+undump 3
+dump 3 all image 10 aimag.full.*.${n}.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump 3 all image 10 aimag.full.*.3.jpg fz type adiam 0.8 size 1024 1024 view 90.0 0.0 center s 0.5 0.5 0.5 zoom 2 shiny 1 axes yes 0.8 0.02
+dump_modify 3 backcolor white amap -1.0 1.0 ca 0.0 4 min red 0.0 black 0.000001 navy max blue
+dump_modify 3 pad 4
+
+if "$n < 3"  then "variable dstep equal 0.0" else "variable dstep equal -1.6"
+variable dstep equal -1.6
+
+
+
+#displace_atoms rbgroup move 0 0 ${dstep} units box
+#displace_atoms rbgroup move 0 ${dstep} ${dstep} units box
+displace_atoms probe move 0 0 ${dstep} units box
+displace_atoms probe move 0 0 -1.6000000000000000888 units box
+
+min_style cg
+min_modify dmax 0.3*${lj_to_metal} line quadratic
+min_modify dmax 0.3*2.5701999999999998181 line quadratic
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 3.44032 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     112 2.3543761e-25   -1762.0376            0   -1762.0376    45160.335 
+     304 2.3543761e-25   -1850.9637            0   -1850.9637    21567.359 
+Loop time of 1.66975 on 1 procs for 192 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1762.03760396     -1850.96367123     -1850.96367123
+  Force two-norm initial, final = 114.373 9.50247e-07
+  Force max component initial, final = 37.8467 1.5306e-07
+  Final line search alpha, max atom move = 1 1.5306e-07
+  Iterations, force evaluations = 192 381
+
+Pair  time (%) = 0.811953 (48.6273)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 0.00625825 (0.374802)
+Outpt time (%) = 0.799549 (47.8844)
+Other time (%) = 0.0519862 (3.11342)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    77087 ave 77087 max 77087 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 77087
+Ave neighs/atom = 134.064
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style hftn
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 4.57862 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     304 2.3543761e-25   -1850.9637            0   -1850.9637    21567.359 
+Loop time of 0.00247097 on 1 procs for 0 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1850.96367123     -1850.96367123     -1850.96367123
+  Force two-norm initial, final = 9.50247e-07 9.50247e-07
+  Force max component initial, final = 1.5306e-07 1.5306e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 0 0
+
+Pair  time (%) = 0.00244308 (98.8711)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 1.5974e-05 (0.646469)
+Outpt time (%) = 0 (0)
+Other time (%) = 1.19209e-05 (0.482439)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    82137 ave 82137 max 82137 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 82137
+Ave neighs/atom = 142.847
+Neighbor list builds = 0
+Dangerous builds = 0
+min_style fire
+minimize 0.0 1.0e-6 100000 100000
+Memory usage per processor = 2.88433 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     304            0   -1850.9637            0   -1850.9637    21567.359 
+     305 8.0048161e-25   -1850.9637            0   -1850.9637    21567.359 
+Loop time of 0.045527 on 1 procs for 1 steps with 575 atoms
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -1850.96367123     -1850.96367123     -1850.96367123
+  Force two-norm initial, final = 9.50247e-07 9.50247e-07
+  Force max component initial, final = 1.5306e-07 1.5306e-07
+  Final line search alpha, max atom move = 0 0
+  Iterations, force evaluations = 1 1
+
+Pair  time (%) = 0.00460482 (10.1145)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 3.00407e-05 (0.0659845)
+Outpt time (%) = 0 (0)
+Other time (%) = 0.0408921 (89.8195)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    82137 ave 82137 max 82137 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 82137
+Ave neighs/atom = 142.847
+Neighbor list builds = 0
+Dangerous builds = 0
+
+
+#dump            dumpid type4 custom 1 dump.melt.*.ljfull x y z fx fy fz
+#run 0
+#undump          dumpid
+
+next n
+jump SELF nloop
+
+#pair_coeff  * 3 lj/expand 0.0 ${lj_to_metal} 0.0 0.1
+#pair_coeff  3 * lj/expand 0.0 ${lj_to_metal} 0.0 0.1
+unfix 2
+unfix fixID1
+dump           surfdump  type4 custom 1 dumpsurffull x y z fx fy fz
+dump           probedump probe custom 1 dumpprobefull x y z fx fy fz
+run 0
+Memory usage per processor = 3.20966 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+     305 8.0048161e-25   -1850.9637            0   -1850.9637    21567.359 
+Loop time of 2.86102e-06 on 1 procs for 0 steps with 575 atoms
+
+Pair  time (%) = 0 (0)
+Neigh time (%) = 0 (0)
+Comm  time (%) = 0 (0)
+Outpt time (%) = 0 (0)
+Other time (%) = 2.86102e-06 (100)
+Gffft  time (%) = 0 (0)
+
+Nlocal:    575 ave 575 max 575 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    3037 ave 3037 max 3037 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    82137 ave 82137 max 82137 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 82137
+Ave neighs/atom = 142.847
+Neighbor list builds = 0
+Dangerous builds = 0
+
+shell "rm log.lammps"

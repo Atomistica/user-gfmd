@@ -1,0 +1,16 @@
+Example of GFMD: Cu(111) against a cylinder indenter by using FixGFMD
+
+Input files:
+   1) GFC.bin                : binary elastic stiffness coefficients file
+   2) in.EAM3D               : script for LAMMPS
+   3) data.pos               : initial configuration
+Output files:
+   1) log.lammps.18May2008   : LAMMPS log file
+   2) gfmd.EAMCu.log         : GFMD log file
+   3) EAMCu.3000             : Final configuration and elastic force
+
+To run this example, simply invoke
+
+lmp -in in.EAM3D -screen none&
+
+It takes just a few seconds with a 2.4 GHz processor.

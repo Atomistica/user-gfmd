@@ -1,0 +1,63 @@
+
+pro generate_datafile
+nx=8d
+ny=8d
+nz=8d
+
+
+fs1='(i7,i2,3(f14.7),a)'      
+fs2='(i7,i2,3(f14.7),3(i5),3(f14.7))'
+zs=' 0 0 0 0.0 0.0 0.0'
+
+a=4.07011d ; 4.08d ; 1.556605d ; fcc unit cell in units lj or metal
+b=a / sqrt(2d) ; nearest neighbor
+i=1L
+
+;avoid type 2 in modified pair_eam
+tys1=[2,4,3,3,3,3,3,3] ; <- nz types
+tys2=[2,4,3,3,3,3,3,3]
+
+
+openw, 1, '8gfdatafile' ; '64gfdatafile'
+printf,1, ''
+printf,1, long(nx*ny*nz*2),' atoms'
+printf,1, ''
+printf,1, '5 atom types'
+;printf,1, '4 atom types'
+printf,1, ''
+printf,1, '0.0  ',b*nx,' xlo xhi'
+printf,1, '0.0  ',b*ny,' ylo yhi'
+printf,1, -0.4*a*nz,a*nz*1.3,' zlo zhi'
+printf,1, ''
+printf,1, 'Masses'
+printf,1, ''
+printf,1, '1 1.000000'
+printf,1, '2 1.000000'
+printf,1, '3 1.000000'
+printf,1, '4 1.000000'
+printf,1, '5 1.000000'
+printf,1, ''
+printf,1, 'Atoms'
+printf,1, ' '
+
+
+
+for x=0d,nx-1 do begin
+  for y=0d,ny-1 do begin
+    printf,1, i,  tys1[0],b*x,     b*y,     a*0,       x,y,3,b*x,    b*y,      a*0,format=fs2
+    printf,1, 1+i,tys2[0],b*x+b/2d,b*y+b/2d,a*0+(a/2d),x,y,2,b*x+b/2d,b*y+b/2d,a*0+(a/2d),format=fs2
+    i += 2L
+    printf,1, i,  tys1[1],b*x,     b*y,     a*1,       x,y,1,b*x,    b*y,      a*1,format=fs2
+    printf,1, 1+i,tys2[1],b*x+b/2d,b*y+b/2d,a*1+(a/2d),x,y,0,b*x+b/2d,b*y+b/2d,a*1+(a/2d),format=fs2
+    i += 2L
+    for z=2d, nz-1 do begin
+      printf,1, i,  tys1[z],b*x,b*y,a*z,zs,format=fs1
+      printf,1, 1+i,tys2[z],b*x+b/2d,b*y+b/2d,a*z+(a/2d),zs,format=fs1
+      i += 2L
+    end
+  end
+end
+
+close, 1
+end
+

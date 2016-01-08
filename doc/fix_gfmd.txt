@@ -1,0 +1,171 @@
+"LAMMPS WWW Site"_lws - "LAMMPS Documentation"_ld - "LAMMPS Commands"_lc :c
+
+:link(lws,http://lammps.sandia.gov)
+:link(ld,Manual.html)
+:link(lc,Section_commands.html#comm)
+
+:line
+
+fix gfmd command :h3
+
+[Syntax:]
+
+fix ID group-ID gfmd prefix style args keyword values ... :pre
+
+ID, group-ID are documented in "fix"_fix.html command :ulb,l
+gfmd = style name of this fix command :l
+prefix = prefix for output files :l
+style = {0} or {1} or {2} or {3} :l
+  {0} arg = gf_expr
+    The Green's function coefficients are calculated from analytic
+    solutions and the original positions of atoms for the
+    evaluation of displacements are calculated from the initial configuration,
+    i.e. positions at the beginning of run.
+    The analytic solution can be
+      isotropic: homogeoneous, isotropic medium
+      sc100:    (100) surface of the simple cubic lattice,
+                see "Y. Saito"_#saito
+      sc100_tr: (100) surface of the simple cubic lattice, transfer matrix
+                formulation
+      fcc100:   (100) surface of the scc lattice, transfer matrix formulation
+    spring coupling)
+  {1} arg = file_xorg gf_expr
+    The Green's function coefficients are calculated from analytic
+    solutions, while the original positions are read from file; the
+    filename of which is given by argument "file_xorg". 
+  {2} arg = file_phi 
+    The &Phi; matrix elements are read from file "file_phi" obtained by
+    "fix gfc"_fix_gfc.html, while the original positions are taken from
+    the initial configuration.
+  {3} args = file_xorg file_phi 
+    Both the &Phi; matrix elements and the original positions are read from file. :pre
+one or more keyword/value pairs may be appended :l
+keyword = {k} or {su} or {sv} or {origin} or {map} or {load} or {output} or {reset} or {dump_stiffness} or {nonzero_phi0} :l
+  {k} args = k
+    k = spring constant, default 1
+  {su} args = ux uy
+    ux,uy = surface vector U in the standard units described by the "units"_units.html command
+  {sv} args = vx vy
+    vx,vy = surface vector V in the standard units described by the "units"_units.html command
+  {origin} value = tag of the atom which will be set as the surface origin
+  {map} value = file-name
+    file-name = file that carries the mapping between surface atom tags and FFT index
+  {load} value = extra-load added to the atoms in group along the last dimension
+    (i.e., {Z} for (2+1)-D and {Y} for (1+1)-D system, respectively.)
+  {reset} value = {yes} or {no}
+    whether to reset the equilibrium positions based on the surface lattice info read from
+    the binary file obtained by "fix_gfc"_fix_gfc.html.
+  {output} args = N
+    output the elastic force acting on atoms every N timesteps to file "prefix"."timestep" :pre
+  {dump_stiffness} args = None
+    dump stiffness coefficient to file
+  {nonzero_phi0} args = None
+    don't reset phi_0 to zero. This allows to model a finite system. Note that
+    the energy of GFMD layer becomes dependent on translation (with respect
+    to the position specified in xorg)
+:ule
+
+[Examples:]
+
+fix 1 bottom gfmd SC_Ana 0 fcc100
+fix 1 bottom gfmd SC_Ana 1 fcc100 xoriginal.dat
+fix 1 bottom gfmd LJ2D   2 phi_matrix.bin map map.in load -0.01 output 5000
+fix 1 bottom gfmd EAMCu  3 xoriginal.dat phi_matrix.bin su 2.2137265 1.2780955 sv 0 2.556191 origin 1 output 5000 :pre
+
+[Description:]
+
+This fix adds the elastic force onto the atoms in group, which incorporate the full elastic response of
+semi-infinite solids in a way that only surface atoms have to be considered in molecular dynamics simulations;
+for theoretical details, see ("Campa&ntilde;&aacute;"_#campana, "Kong"_#kong).
+
+At each timestep, this fix transforms the atomic displacements from real
+space into reciprocal space by calling the FFT3d wrapper from "kspace package"_kspace_style.html of LAMMPS
+and then computes the reciprocal forces by multipling the reciprocal displacement vector by
+the &Phi; matrix; the reciprocal forces are then transformed back into the real space and
+applied onto the corresponding atoms.
+
+The formulas below show schematically the above described procedure:
+<center>[{u}]([q]) = FFT[u]([r])</center>
+<center>[{f}]([q]) = -[&Phi;]([q])[{u}]([q])</center>
+<center>[f]([r]) = rFFT[{f}]([q])</center>
+
+For the use of keywords {su}, {sv}, {origin}, and {map}, please refer to the document of
+"fix gfc"_fix_gfc.html.
+
+If keyword {load} is specified, extra force will be applied to the last dimension for
+all atoms in the group; alternatively, one can also use "fix addforce"_fix_addforce.html
+to add the extra force.
+
+If keyword {output} is specified, the instantaneous elastic force acting on the atoms
+in group will be written to file "prefix"."timestep" every N time steps, where "prefix"
+will be replaced by the command option prefix and "timestep" by the current time step
+number; the elastic force will also be written after the last step of the run. 
+No information of the elastic force will be output if the keyword {output} is not set.
+
+The initialization information will be written to file gfmd."prefix".log,
+in which one can found the mapping information between the atoms in the manifold and
+the FFT mesh; usually for a continuous run, the computation of the mapping based on
+surface vectors will fail, and the mapping information will need to be read
+from file via the {map} keyword.
+
+For a restart run, atoms in the Green's function layer usually do not sit at their
+equilibrium positions, one would better provide the original/equilibrium positions
+(via style {1} or {3}) and the mapping information (via keyword {map}) by input files.
+
+[Restart, fix_modify, output, run start/stop, minimize info:]
+
+No information about this fix is written to "binary restart file"_restart.html.
+None of the fix_modify options are relevant to this fix.
+
+This fix computes a 3-vector of forces, which can be accessed by various
+"output"_Section_howto.html#4_15 commands. This is the total force on the group of
+atoms before the forces on individual atoms are changed by this fix. The vector values
+calculated by this fix are "extensive", meaning they scale with the number of atoms
+in the simulation. 
+
+Besides, this fix will also output its own initialization information, and elastic forces
+if keyword {output} is specified.
+
+No parameter of this fix can be used with the start/stop keywords of the
+"run"_run.html command.
+
+This fix is not invoked during "energy minimization"_minimize.html.
+
+[Restrictions:]
+
+This fix assumes a single layer (or a line for (1+1)-D system) of atoms with  periodical lattice,
+i.e., atoms in the goupr must be in the same layer or line under equilibrium condition without extra load.
+
+[Related commands:]
+
+"fix gfc"_fix_gfc.html, "fix addforce"_fix_addforce.html
+
+[Note:]
+
+Compiling of this fix along with LAMMPS requires that the "FFT3d wrapper of kspace package"_kspace_style.html
+is included while compiling.
+
+[Default:]
+The option defaults are {load} = 0.0, {output} = 0 (no output), {reset} = no.
+
+:line
+
+:link(saito)
+([Y. Saito]) Yukio Saito, {Elastic Lattice Green's Function in Three Dimensions},
+"Journal of the Physical Society of Japan [73](7), 1816-1826 (2004)"_http://dx.doi.org/10.1143/JPSJ.73.1816.
+
+Hideaki Uemura, Yukio Saito, and Makio Uwaha, {Equilibrium
+Morphology in Two-Dimensional Heteroepitaxy on an Elastic Substrate},
+"Journal of the Physical Society of Japan [72](11), 2856-2865
+(2003)."_http://jpsj.ipap.jp/link?JPSJ/72/2856/
+
+:link(campana)
+([C. Campa&ntilde;&aacute;]) C. Campa&#241;&#225; and M. H. M&#252;ser,
+{Practical Green's function approach to the simulation of elastic
+semi-infinite solids}, "Phys. Rev. B [74], 075420
+(2006)"_http://dx.doi.org/10.1103/PhysRevB.74.075420
+
+:link(kong)
+[(Kong)] L.T. Kong, G. Bartels, C. Campa&ntilde;&aacute;, C. Denniston, and Martin H. M&uuml;ser,
+{Implementation of Green's function molecular dynamics: An extension to LAMMPS},
+"Computer Physics Communications, in press (2009), doi:10.1016/j.cpc.2008.12.035"_http://dx.doi.org/10.1016/j.cpc.2008.12.035

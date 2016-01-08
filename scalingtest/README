@@ -1,0 +1,46 @@
+
+
+***To run the test***
+cd to the subdirectory of the desired ./runtest file
+(Optional) Modify the test output directory name in ./runtest
+Run ./runtest where the argument is the LAMMPS-GFMD executable:
+  ./runtest path/lmp_executable
+
+***Automated testing verdict***
+cd into the test output directory (eg ./lj1nn/01_test/)
+python ../../force_analysis.py
+
+
+***For quick viewing of test output***
+cd into the test output directory (eg ./lj1nn/01_test/)
+idl
+  .compile ../../force_analysis
+  force_analysis
+  ; If saving the image is desired, type:
+  write_png, "error_scaling.png", tvrd(true=1)
+exit
+
+
+***Understand the plot***
+Compare the plot to "Expected_Output.png"
+Each simulation displaces several test atoms a certain distance.
+The grey data points are the magnitude of the global restoring 
+force for that displacement, as calculated by full LAMMPS.  
+The same simulation is run with the faster GFMD method.  
+The black data points are the magnitude of the difference of the
+ global force vectors.
+The grey datapoints should be approximately linear with slope 1 
+on the log-log axes.  This is because, for small displacements, 
+the restoring force vs displacment is linear.
+The black datapoints (error) should also be linear, with slope 
+2.0; GFMD should give only force-error that is quadratic in 
+displacement.  
+The red (grey) line has slope 2.0 (1.0) as a visual guide.
+When the vertical distance between the lines is two decades, the
+GFMD accuracy is 1%.
+Inconsistencies in stiffness coefficient, substrate depth, 
+boundaries, surface relaxation, etc. produce large linear 
+contributions to the error, easily visible on these plots.
+This can be seen by modifying the input files for the test.
+
+

@@ -1,0 +1,6 @@
+
+./delete_output
+mpirun ../../lmp_gfeamtest -in in.melt.gf
+mpirun ../../lmp_gfeamtest -in in.melt.full
+idl quickviewerror
+  exit

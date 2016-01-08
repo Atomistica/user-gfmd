@@ -1,0 +1,129 @@
+# linux = Ubuntu Linux box, g++, OpenMPI, FFTW
+
+SHELL = /bin/sh
+.SUFFIXES: .cpp .cu .d
+
+# ---------------------------------------------------------------------
+# compiler/linker settings
+# specify flags and libraries needed for your compiler
+
+CC =		mpiCC
+CCFLAGS =       -g -G -O0 
+# -DGFMD_DEBUG
+#CCFLAGS =	-g -O2 -xHost -funroll-loops
+NVCC =	        nvcc
+NVCCFLAGS =     -O0 -g -G -ftz=true -prec-div=false -prec-sqrt=false --ptxas-options=-v -arch sm_35
+DEPFLAGS =	-M
+LINK =		mpiCC
+LINKFLAGS =	-g -O
+LIB =            -lstdc++ 
+ARCHIVE =	ar
+ARFLAGS =	-rc
+SIZE =		size
+
+# ---------------------------------------------------------------------
+# LAMMPS-specific settings
+# specify settings for LAMMPS features you will use
+
+# LAMMPS ifdef options, see doc/Section_start.html
+
+LMP_INC =	-DLAMMPS_GZIP
+
+# MPI library, can be src/STUBS dummy lib
+# INC = path for mpi.h, MPI compiler settings
+# PATH = path for MPI library
+# LIB = name of MPI library
+
+MPI_INC =      -I/usr/mpi/intel/openmpi-1.4.3/include
+MPI_PATH = 
+MPI_LIB = 
+
+# FFT library, can be -DFFT_NONE if not using PPPM from KSPACE package
+# INC = -DFFT_FFTW, -DFFT_INTEL, -DFFT_NONE, etc, FFT compiler settings
+# PATH = path for FFT library
+# LIB = name of FFT library
+
+# #FFT_INC =  -DFFT_FFTW -I/opt/fftw/2.1.5/include
+# #FFT_INC =  -DFFT_FFTW -I/scratch0/fs1_quota/tsharp/homebup/fftw/include
+FFT_INC =  -DFFT_FFTW3 -DFFT_CUFFT -DGFMD_CUFFT -I/usr/include
+#FFT_INC =  
+FFT_PATH =      -L/usr/lib64 
+# #FFT_LIB =	-L/opt/fftw/2.1.5/lib -lfftw
+# #FFT_LIB =	-L/scratch0/fs1_quota/tsharp/homebup/fftw/lib -lfftw
+FFT_LIB =       -L/usr/lib64/ -lfftw3
+CUDA_INC =      -I../../lib/cuda/
+#FFT_LIB =
+
+# additional system libraries needed by LAMMPS package libraries
+# these settings are IGNORED if the corresponding LAMMPS package
+#   (e.g. gpu, meam) is NOT included in the LAMMPS build
+# SYSLIB = names of libraries
+# SYSPATH = paths of libraries
+
+gpu_SYSLIB =       -lcudart -lcuda
+#meam_SYSLIB =      -lifcore -lsvml -lompstub -limf
+#reax_SYSLIB =      -lifcore -lsvml -lompstub -limf
+#user-atc_SYSLIB =  -lblas -llapack
+
+gpu_SYSPATH =      -L/usr/local/cuda/lib64  -L/usr/site/cuda/lib64
+#meam_SYSPATH =     -L/opt/intel/fce/10.0.023/lib
+#reax_SYSPATH =     -L/opt/intel/fce/10.0.023/lib
+#user-atc_SYSPATH = 	
+
+# NetCDF libraries
+#NETCDF_INC = `nc-config --cflags`
+#NETCDF_PATH =
+#NETCDF_LIB = `nc-config --libs` -lnetcdf_c++
+
+# LAPACK libraries
+#LAPACK_INC = $(MKLROOT)/include -DHAVE_MKL
+#LAPACK_PATH = -L$(MKLROOT)/lib/em64t
+#LAPACK_LIB = -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_lapack -lmkl_core -liomp5 -pthread
+
+# MDCORE stuff
+#MDCORE_INC = -I$(HOME)/Sources/mdcore_public/build_lammps -I$(HOME)/Sources/mdcore_public/src/support
+#MDCORE_PATH = -L$(HOME)/Sources/mdcore_public/build_lammps -L/usr/site/intel_fortan-11.0.074/lib 
+#MDCORE_LIB = -lmdcore -lifcore -lifport -lmkl=sequential -lmpi_f77
+
+JPG_INC =       -DLAMMPS_JPEG -I/usr/include -I/home/tsharp/genbin/python/Canopy/appdata/canopy-1.1.0.1371.rh5-x86_64/include/
+JPG_PATH =      -L/usr/lib64 -L/home/tsharp/genbin/python/Canopy/appdata/canopy-1.1.0.1371.rh5-x86_64/lib
+JPG_LIB =       -ljpeg
+
+# ---------------------------------------------------------------------
+# build rules and dependencies
+# no need to edit this section
+
+include	Makefile.package
+
+EXTRA_INC = $(LMP_INC) $(PKG_INC) $(MPI_INC) $(FFT_INC) $(JPG_INC) $(CUDA_INC)
+EXTRA_PATH = $(PKG_PATH) $(MPI_PATH) $(FFT_PATH) $(JPG_PATH) $(PKG_SYSPATH)
+EXTRA_LIB = $(PKG_LIB) $(MPI_LIB) $(FFT_LIB) $(JPG_LIB) $(PKG_SYSLIB)
+
+# Path to src files
+
+vpath %.cpp ..
+vpath %.h ..
+vpath %.cu ..
+
+# Link target
+
+$(EXE):	$(OBJ)
+	$(LINK) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(EXTRA_LIB) $(LIB) -o $(EXE)
+	$(SIZE) $(EXE)
+
+# Library target
+
+lib:	$(OBJ)
+	$(ARCHIVE) $(ARFLAGS) $(EXE) $(OBJ)
+
+# Compilation rules
+
+.cpp.o:
+	$(CC) $(CCFLAGS) $(EXTRA_INC) -c $<
+
+.cu.o:
+	$(NVCC) $(NVCCFLAGS) $(EXTRA_INC) -c $<
+
+# Individual dependencies
+
+$(OBJ):	     $(INC)

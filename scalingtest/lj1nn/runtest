@@ -1,0 +1,20 @@
+#!/bin/bash
+
+foldername='01_test'
+lmp_exe=$1
+np='2' # Number of procs on which to run (on this computer)
+
+mkdir -p $foldername
+
+for dstep in '0.000001' '0.0001' '0.01' '1.0'
+do
+  echo $dstep
+  mpirun -np $np $lmp_exe -in in.gf -var dstep \-$dstep 
+  sleep 1
+  mpirun -np $np $lmp_exe -in in.full -var dstep \-$dstep 
+  subfolder=dstep$dstep 
+  mkdir -p $foldername/$subfolder 
+  cp -p in.gf in.full $foldername/$subfolder 
+  mv log.gf log.full dumpprobegf dumpprobefull $foldername/$subfolder
+done
+
