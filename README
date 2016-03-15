@@ -27,7 +27,7 @@ in the file of src/Makefile before invoke `make yes-user`. Note that
 If used with USER-CUDA, go into the USER-GFMD directory and execute
 `sh Install.sh 1` manually.
 
-This is the pair-potential version of the code.
+Functionality beyond pair potentials will be included soon.
 
 ---
 
