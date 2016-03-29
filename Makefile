@@ -15,8 +15,8 @@ BUILDDIR   = build
 SRC        = \
 	memory.cpp \
 	linearalgebra.cpp \
-	gfmd_memory.cpp \
-	gfmd_stiffness.cpp \
+	memory.cpp \
+	surface_stiffness.cpp \
 	table2d.cpp
 
 TESTSRC = \
