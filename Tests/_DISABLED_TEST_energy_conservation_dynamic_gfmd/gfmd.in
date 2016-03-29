@@ -1,4 +1,0 @@
-fix gfmd all gfmd gfmd fcc100 1.0 1 reset_xeq reset_map solver dynamic 10 0.707106781186547 1.0 1.0 dump 100
-#fix gfmd all gfmd gfmd fcc100 1.0 1 reset_xeq reset_map
-fix_modify gfmd energy yes
-
