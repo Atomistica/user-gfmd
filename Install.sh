@@ -5,7 +5,7 @@
 #   - Dont change the install flags while USER-GFMD package is installed
 
 
-# mode = 0/1/2 for uninstall/install/update
+# mode = 0/1/2 for uninstall/install/update as set during LAMMPS' make-option command
 mode=$1
 
 
@@ -35,6 +35,7 @@ manybody=0
 add_or_rm () {
 
   file=`basename $1`
+  # src directory is ../ unless specified by arg2
   srcdir=..
   if (test -n "$2") then 
     srcdir=$2 
@@ -54,7 +55,7 @@ add_or_rm () {
     if (! cmp -s $1 $srcdir/$file) then
       cp $1 $srcdir -p
       if (test $mode = 2) then
-        echo "  Updating src/$file"
+        echo "  Updating LAMMPS/src/$file"
       fi
     fi
   fi
@@ -127,99 +128,99 @@ set_or_unset () {
 
 
 # Add/Remove .cpp files to/from src directory
-add_or_rm mathutils/linearalgebra.cpp
-add_or_rm stiffnesskernels/geometry.cpp
-add_or_rm stiffnesskernels/li_berger.cpp
-add_or_rm mathutils/table2d.cpp
-add_or_rm atom_vec_gfmd.cpp
-add_or_rm gfmd_solver.cpp
-add_or_rm solvers/gfmd_solver_fft.cpp
-add_or_rm solvers/gfmd_solver_dynamic.cpp
-add_or_rm solvers/gfmd_solver_static.cpp  
-add_or_rm surface_stiffness.cpp
-add_or_rm stiffnesskernels/debug_stiffness.cpp
-add_or_rm stiffnesskernels/isotropic_stiffness.cpp
-add_or_rm stiffnesskernels/sc100_stiffness.cpp
-add_or_rm stiffnesskernels/fcc100_stiffness.cpp
-add_or_rm stiffnesskernels/fcc100ft_stiffness.cpp
-add_or_rm stiffnesskernels/ft_stiffness.cpp
-add_or_rm crystal_surface.cpp
-add_or_rm surfaces/dia100_surface.cpp
-add_or_rm surfaces/dia111_surface.cpp
-add_or_rm surfaces/fcc100_surface.cpp
-add_or_rm surfaces/fcc111_surface.cpp
-add_or_rm surfaces/sc100_surface.cpp
-add_or_rm force_constants.cpp
-add_or_rm forceconstants/fc_lj_cut.cpp
-add_or_rm forceconstants/fc_lj_cut_fd.cpp
-add_or_rm forceconstants/fc_lj_smooth.cpp
-add_or_rm forceconstants/fc_pair_potential.cpp
-add_or_rm forceconstants/fc_finite_differences.cpp
-add_or_rm forceconstants/pair_lj_cut_gf.cpp
-add_or_rm gfmd_misc.cpp
-add_or_rm fix_gfmd.cpp
-add_or_rm extras/fix_contact_rigid.cpp
-add_or_rm extras/fix_contact_sphere.cpp
-add_or_rm extras/fix_wall_map.cpp
-# add_or_rm extras/min_cg_gfmd.cpp These dont compile for me.  Error is
-# add_or_rm extras/min_tr_gfmd.cpp  line (99): error: class "LAMMPS_NS::FixGFMD" has no member "prec_gradient"
-add_or_rm extras/displace_xeq.cpp
-add_or_rm extras/fix_addforce_dynamic.cpp
+add_or_rm src/mathutils/linearalgebra.cpp
+add_or_rm src/stiffness_kernels/geometry.cpp
+add_or_rm src/stiffness_kernels/li_berger.cpp
+add_or_rm src/mathutils/table2d.cpp
+add_or_rm src/main/atom_vec_gfmd.cpp
+add_or_rm src/main/gfmd_solver.cpp
+add_or_rm src/solvers/gfmd_solver_fft.cpp
+add_or_rm src/solvers/gfmd_solver_dynamic.cpp
+add_or_rm src/solvers/gfmd_solver_static.cpp  
+add_or_rm src/main/surface_stiffness.cpp
+add_or_rm src/stiffness_kernels/debug_stiffness.cpp
+add_or_rm src/stiffness_kernels/isotropic_stiffness.cpp
+add_or_rm src/stiffness_kernels/sc100_stiffness.cpp
+add_or_rm src/stiffness_kernels/fcc100_stiffness.cpp
+add_or_rm src/stiffness_kernels/fcc100ft_stiffness.cpp
+add_or_rm src/stiffness_kernels/ft_stiffness.cpp
+add_or_rm src/main/crystal_surface.cpp
+add_or_rm src/surfaces/dia100_surface.cpp
+add_or_rm src/surfaces/dia111_surface.cpp
+add_or_rm src/surfaces/fcc100_surface.cpp
+add_or_rm src/surfaces/fcc111_surface.cpp
+add_or_rm src/surfaces/sc100_surface.cpp
+add_or_rm src/main/force_constants.cpp
+add_or_rm src/force_constants/fc_lj_cut.cpp
+add_or_rm src/force_constants/fc_lj_cut_fd.cpp
+add_or_rm src/force_constants/fc_lj_smooth.cpp
+add_or_rm src/force_constants/fc_pair_potential.cpp
+add_or_rm src/force_constants/fc_finite_differences.cpp
+add_or_rm src/force_constants/pair_lj_cut_gf.cpp
+add_or_rm src/main/gfmd_misc.cpp
+add_or_rm src/main/fix_gfmd.cpp
+add_or_rm src/extras/fix_contact_rigid.cpp
+add_or_rm src/extras/fix_contact_sphere.cpp
+add_or_rm src/extras/fix_wall_map.cpp
+# add_or_rm src/extras/min_cg_gfmd.cpp These dont compile for me.  Error is
+# add_or_rm src/extras/min_tr_gfmd.cpp  line (99): error: class "LAMMPS_NS::FixGFMD" has no member "prec_gradient"
+add_or_rm src/extras/displace_xeq.cpp
+add_or_rm src/extras/fix_addforce_dynamic.cpp
 
 # Add/Remove .h files from src/ directory
-add_or_rm mathutils/complexcomp.h
-add_or_rm mathutils/vec.h
-add_or_rm mathutils/mat.h
-add_or_rm mathutils/linearalgebra.h
-add_or_rm stiffnesskernels/geometry.h
-add_or_rm stiffnesskernels/li_berger.h
-add_or_rm mathutils/table2d.h
-add_or_rm atom_vec_gfmd.h
-add_or_rm gfmd_solver.h
-add_or_rm solvers/gfmd_solver_fft.h
-add_or_rm solvers/gfmd_solver_dynamic.h
-add_or_rm solvers/gfmd_solver_static.h
-add_or_rm surface_stiffness.h
-add_or_rm stiffnesskernels/debug_stiffness.h
-add_or_rm stiffnesskernels/isotropic_stiffness.h
-add_or_rm stiffnesskernels/sc100_stiffness.h
-add_or_rm stiffnesskernels/fcc100_stiffness.h
-add_or_rm stiffnesskernels/fcc100ft_stiffness.h
-add_or_rm stiffnesskernels/ft_stiffness.h
-add_or_rm crystal_surface.h
-add_or_rm surfaces/dia100_surface.h
-add_or_rm surfaces/dia111_surface.h
-add_or_rm surfaces/fcc100_surface.h
-add_or_rm surfaces/fcc111_surface.h
-add_or_rm surfaces/sc100_surface.h
-add_or_rm force_constants.h
-add_or_rm forceconstants/fc_lj_cut.h
-add_or_rm forceconstants/fc_lj_cut_fd.h
-add_or_rm forceconstants/fc_lj_smooth.h
-add_or_rm forceconstants/fc_pair_potential.h
-add_or_rm forceconstants/fc_finite_differences.h
-add_or_rm forceconstants/pair_lj_cut_gf.h
-add_or_rm gfmd_misc.h
-add_or_rm fix_gfmd.h
-add_or_rm gfmd_grid.h
-add_or_rm extras/fix_contact_rigid.h
-add_or_rm extras/fix_contact_sphere.h
-add_or_rm extras/fix_wall_map.h
-# add_or_rm folder/min_cg_gfmd.h These dont compile for me.  Error is 
-# add_or_rm folder/min_tr_gfmd.h line (99): error: class "LAMMPS_NS::FixGFMD" has no member "prec_gradient"
-add_or_rm extras/displace_xeq.h
-add_or_rm extras/fix_addforce_dynamic.h
+add_or_rm src/mathutils/complexcomp.h
+add_or_rm src/mathutils/vec.h
+add_or_rm src/mathutils/mat.h
+add_or_rm src/mathutils/linearalgebra.h
+add_or_rm src/stiffness_kernels/geometry.h
+add_or_rm src/stiffness_kernels/li_berger.h
+add_or_rm src/mathutils/table2d.h
+add_or_rm src/main/atom_vec_gfmd.h
+add_or_rm src/main/gfmd_solver.h
+add_or_rm src/solvers/gfmd_solver_fft.h
+add_or_rm src/solvers/gfmd_solver_dynamic.h
+add_or_rm src/solvers/gfmd_solver_static.h
+add_or_rm src/main/surface_stiffness.h
+add_or_rm src/stiffness_kernels/debug_stiffness.h
+add_or_rm src/stiffness_kernels/isotropic_stiffness.h
+add_or_rm src/stiffness_kernels/sc100_stiffness.h
+add_or_rm src/stiffness_kernels/fcc100_stiffness.h
+add_or_rm src/stiffness_kernels/fcc100ft_stiffness.h
+add_or_rm src/stiffness_kernels/ft_stiffness.h
+add_or_rm src/main/crystal_surface.h
+add_or_rm src/surfaces/dia100_surface.h
+add_or_rm src/surfaces/dia111_surface.h
+add_or_rm src/surfaces/fcc100_surface.h
+add_or_rm src/surfaces/fcc111_surface.h
+add_or_rm src/surfaces/sc100_surface.h
+add_or_rm src/main/force_constants.h
+add_or_rm src/force_constants/fc_lj_cut.h
+add_or_rm src/force_constants/fc_lj_cut_fd.h
+add_or_rm src/force_constants/fc_lj_smooth.h
+add_or_rm src/force_constants/fc_pair_potential.h
+add_or_rm src/force_constants/fc_finite_differences.h
+add_or_rm src/force_constants/pair_lj_cut_gf.h
+add_or_rm src/main/gfmd_misc.h
+add_or_rm src/main/fix_gfmd.h
+add_or_rm src/main/gfmd_grid.h
+add_or_rm src/extras/fix_contact_rigid.h
+add_or_rm src/extras/fix_contact_sphere.h
+add_or_rm src/extras/fix_wall_map.h
+# add_or_rm src/folder/min_cg_gfmd.h These dont compile for me.  Error is 
+# add_or_rm src/folder/min_tr_gfmd.h line (99): error: class "LAMMPS_NS::FixGFMD" has no member "prec_gradient"
+add_or_rm src/extras/displace_xeq.h
+add_or_rm src/extras/fix_addforce_dynamic.h
 
 # Apply the tiny patches that LAMMPS requires for new styles
-toggle_patch ../atom.cpp atom.cpp.patch
-toggle_patch ../atom.h atom.h.patch
-toggle_patch ../pair_lj_smooth.h forceconstants/pair_lj_smooth.h.patch
+toggle_patch ../atom.cpp src/main/atom.cpp.patch
+toggle_patch ../atom.h src/main/atom.h.patch
+toggle_patch ../pair_lj_smooth.h src/force_constants/pair_lj_smooth.h.patch
 
 if (test -e ../comm_brick.cpp) then
   # We have a new LAMMPS version. Patch comm_brick.cpp
-  toggle_patch ../comm_brick.cpp comm_brick.cpp.patch
+  toggle_patch ../comm_brick.cpp src/main/comm_brick.cpp.patch
 else
-  toggle_patch ../comm.cpp comm.cpp.patch
+  toggle_patch ../comm.cpp src/main/comm.cpp.patch
 fi
 
 if ((test $mode -ge 1) && (test ! -e ../fft3d_wrap.h)) then
@@ -231,8 +232,8 @@ fi
 #######################################################
 
 if (test $ncvar = 1) then 
-  add_or_rm extras/gfmd_analyzer.cpp
-  add_or_rm extras/gfmd_analyzer.h
+  add_or_rm src/extras/gfmd_analyzer.cpp
+  add_or_rm src/extras/gfmd_analyzer.h
 fi
 
 
@@ -243,7 +244,7 @@ fi
 
 # 
 if (test $usercuda = 1) then
-  echo "Many body functionality not included"
+  echo "User Cuda functionality not included"
 fi
 
 #
@@ -251,8 +252,8 @@ if (test $fftw3 = 1) then
 
   set_or_unset GFMD_FFTW3
 
-  add_or_rm stiffnesskernels/nonperiodic_stiffness.cpp
-  add_or_rm stiffnesskernels/nonperiodic_stiffness.h
+  add_or_rm src/stiffness_kernels/nonperiodic_stiffness.cpp
+  add_or_rm src/stiffness_kernels/nonperiodic_stiffness.h
 fi
 
 
