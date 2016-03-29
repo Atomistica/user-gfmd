@@ -13,9 +13,9 @@ namespace LAMMPS_NS {
 
 class FTStiffnessKernel : public StiffnessKernel {
  public:
-	FTStiffnessKernel(int, int *, char **, Domain *, Force *, Memory *,
+    FTStiffnessKernel(int, int *, char **, Domain *, Force *, Memory *,
                       Error *);
-	~FTStiffnessKernel();
+    ~FTStiffnessKernel();
 
     virtual const double *get_cell() const {
         return crystal_surface_->get_cell();
@@ -44,7 +44,7 @@ class FTStiffnessKernel : public StiffnessKernel {
                                         double_complex *, double_complex *,
                                         double_complex dU=0.0);
 
-	virtual void get_force_at_gamma_point(double *);
+    virtual void get_force_at_gamma_point(double *);
 
     /*!
      * Dump generic text info to file
@@ -58,28 +58,28 @@ class FTStiffnessKernel : public StiffnessKernel {
     virtual bool is_manybody() { return force_constants_->is_manybody(); }
 
  private:
-	/*
-	 * Surface normal
-	 */
-	int z_;
+    /*
+     * Surface normal
+     */
+    int z_;
 
-	/*
-	 * Forces added to each surface layer
-	 * The per-atom contribution, normal to the surface, to
-	 * each layer to offset surface relaxation.  Max interaction range
-	 * implemented is 2 atomic layers, so max many-body nu_ is 2*2.
-	 */
-	double linf_[2*2];
+    /*
+     * Forces added to each surface layer
+     * The per-atom contribution, normal to the surface, to
+     * each layer to offset surface relaxation.  Max interaction range
+     * implemented is 2 atomic layers, so max many-body nu_ is 2*2.
+     */
+    double linf_[2*2];
 
-	/*!
-	 * Crystal lattice
-	 */
-	CrystalSurface *crystal_surface_;
+    /*!
+     * Crystal lattice
+     */
+    CrystalSurface *crystal_surface_;
 
-	/*!
-	 * Interation model, force-constant matrix
-	 */
-	ForceConstants *force_constants_;
+    /*!
+     * Interation model, force-constant matrix
+     */
+    ForceConstants *force_constants_;
 
     /*!
      * The actual values of the force constants between pairs in the interfacial
@@ -105,8 +105,6 @@ class FTStiffnessKernel : public StiffnessKernel {
      */
     double *D1ij_;
 };
-
- 
 
 }
 

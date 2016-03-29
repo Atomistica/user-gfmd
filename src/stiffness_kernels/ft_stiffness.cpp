@@ -46,8 +46,7 @@ FTStiffnessKernel::FTStiffnessKernel(int narg, int *carg, char **arg,
         error->all(FLERR,errstr);
     }
 
-    i = *carg;
-    if (i >= narg)
+    if (*carg >= narg)
         error->all(FLERR,"Missing interaction model (force constants "
                    "definition).");
 
