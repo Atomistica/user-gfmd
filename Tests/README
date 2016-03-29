@@ -1,3 +1,6 @@
+Running the tests
+-----------------
+
 Execute
 
 run_test.sh <LAMMPS-exectuable>
