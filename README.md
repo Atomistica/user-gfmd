@@ -36,12 +36,15 @@ Functionality beyond pair potentials will be included soon.
 Testing
 -------
 
-Parts of the code are included in a testing framework that uses Google Test
-v1.6.0. To compile type
+There are two separate testing frameworks:
 
-make unittests
+1. Unittests are separate from the LAMMPS executable and use Google Test
+   v1.6.0. To compile type `make unittests` in the USER-GFMD directory. Then
+   execute the "unittests" binary.
 
-in the USER-GFMD directory and execute the "unittests" binary.
+2. Compound tests run LAMMPS and check the output. To run these tests
+   change to the `tests` subdirectory and run the `run_test.sh` executable with
+   the path to the LAMMPS binary as the only argument.
 
 Version compatibility
 ---------------------
