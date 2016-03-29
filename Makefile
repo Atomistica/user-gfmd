@@ -1,15 +1,16 @@
 SHELL      = /bin/sh
 
-VPATH      = src/LAMMPS_STUB src/main src/mathutils src/stiffness_kernels src/surfaces src/unittests src/unittests/gtest-1.6.0/src/
+VPATH      = src/LAMMPS_STUB src/main src/mathutils src/stiffness_kernels src/surfaces src/unittests src/unittests/gtest-1.6.0/src
 
 CC         = g++
 CCFLAGS    = -g -O0
-#CCFLAGS    = -O0 -g `nc-config --cflags`
 LINK       = g++
-LINKFLAGS  = -g -O0 -pthread #`nc-config --libs` -lnetcdf_c++ 
+LINKFLAGS  = -g -O0 -pthread
 
 INC        = -Isrc/LAMMPS_STUB -Isrc/main -Isrc/mathutils -Isrc/stiffness_kernels -Isrc/surfaces -Isrc/unittests/gtest-1.6.0 -Isrc/unittests/gtest-1.6.0/include
 LIB        = 
+
+BUILDDIR   = build
 
 SRC        = \
 	memory.cpp \
@@ -40,9 +41,9 @@ TESTSRC = \
 	test_main.cpp
 
 
-OBJ = $(SRC:.cpp=.o)
-TESTOBJ1 = $(TESTSRC:.cpp=.o)
-TESTOBJ = $(TESTOBJ1:.cc=.o)
+OBJ = $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRC))
+TESTOBJ1 = $(patsubst %.cpp,$(BUILDDIR)/%.o,$(TESTSRC))
+TESTOBJ = $(patsubst %.cc,$(BUILDDIR)/%.o,$(TESTOBJ1))
 
 EXE = eval_stiffness eval_penetration eval_gap
 
@@ -52,11 +53,11 @@ unittests: $(TESTOBJ)
 $(EXE):	% : $(OBJ) %.o
 	$(LINK) $(LINKFLAGS) $(OBJ) $@.o $(LIB) -o $@
 
-%.o:%.cc
-	$(CC) $(CCFLAGS) $(INC) -c $<
+$(BUILDDIR)/%.o:%.cc
+	$(CC) $(CCFLAGS) $(INC) -c $< -o $@
 
-%.o:%.cpp
-	$(CC) $(CCFLAGS) $(INC) -c $<
+$(BUILDDIR)/%.o:%.cpp
+	$(CC) $(CCFLAGS) $(INC) -c $< -o $@
 
 all: $(EXE)
 
