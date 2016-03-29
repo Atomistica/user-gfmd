@@ -1,14 +1,18 @@
+Green's function molecular dynamics code
+========================================
+
 If you use this code, please cite:
 
-  C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)
-  L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)
+- C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)
+- L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)
 
----
+LAMMPS
+------
 
 The files in this directory are a user-contributed package for LAMMPS.
 
 This package implements the Green's function molecular dynamics, by
-introducing one more fixes to LAMMPS. FixGFMD, is used to evaluate the
+introducing one more fixes to LAMMPS. `fix gfmd`, is used to evaluate the
  effective elastic forces by using the elastic stiffness coefficients.
 
 See the documentation files of this commands for detailed usage.
@@ -29,9 +33,8 @@ If used with USER-CUDA, go into the USER-GFMD directory and execute
 
 Functionality beyond pair potentials will be included soon.
 
----
-
-TESTING FRAMEWORK:
+Testing
+-------
 
 Parts of the code are included in a testing framework that uses Google Test
 v1.6.0. To compile type
@@ -40,10 +43,9 @@ make unittests
 
 in the USER-GFMD directory and execute the "unittests" binary.
 
----
+Version compatibility
+---------------------
 
-Version compatibility:
-
-Up to rev 161 works with lammps-5Jan11
-Up to rev XXX works with lammps-14Aug11
+- Up to rev 161 works with lammps-5Jan11
+- Up to rev XXX works with lammps-14Aug11
 
