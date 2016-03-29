@@ -13,21 +13,41 @@ namespace LAMMPS_NS {
 
 class NonperiodicStiffnessKernel : public StiffnessKernel {
  public:
-  NonperiodicStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~NonperiodicStiffnessKernel();
+    NonperiodicStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
+    ~NonperiodicStiffnessKernel();
   
-  virtual void get_stiffness_matrix(double, double, double_complex *,
-                                    double_complex dU);
-  virtual void get_stiffness_matrix(int, int, double, double, double_complex *,
-                                    double_complex dU); 
+    virtual void get_stiffness_matrix(double, double, double_complex *,
+                                      double_complex dU);
+    virtual void get_stiffness_matrix(int, int, double, double, double_complex *,
+                                      double_complex dU); 
 
  private:
-  double Poisson_number_, shear_modulus_;
+    /*!
+     * Crystal lattice
+     */
+    CrystalSurface *crystal_surface_;
 
-  int nx_, ny_;
-  fftw_complex **complex_buffer_;
+    /*!
+     * Poisson number
+     */
+    double Poisson_number_;
 
-  void create_and_fill_buffer(int, int);
+    /*!
+     * Shear modulus
+     */
+    double shear_modulus_;
+
+    /*!
+     * Grid dimension
+     */
+    int nx_, ny_;
+
+    /*!
+     * FFT buffer
+     */
+    fftw_complex **complex_buffer_;
+
+    void create_and_fill_buffer(int, int);
 };
 
 }
