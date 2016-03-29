@@ -1,1 +1,1 @@
-../../lmptype.h
+../../../lmptype.h

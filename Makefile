@@ -1,14 +1,14 @@
 SHELL      = /bin/sh
 
-VPATH      = LAMMPS_STUB mathutils stiffnesskernels surfaces testing testing/gtest-1.6.0/src/
+VPATH      = src/LAMMPS_STUB src/main src/mathutils src/stiffness_kernels src/surfaces src/unittests src/unittests/gtest-1.6.0/src/
 
 CC         = g++
-CCFLAGS    = -g -O0 -I. -Imathutils -Istiffnesskernels -Isurfaces -Itesting/gtest-1.6.0 -Itesting/gtest-1.6.0/include -lefence #`nc-config --cflags`
+CCFLAGS    = -g -O0
 #CCFLAGS    = -O0 -g `nc-config --cflags`
 LINK       = g++
 LINKFLAGS  = -g -O0 -pthread #`nc-config --libs` -lnetcdf_c++ 
 
-INC        = -ILAMMPS_STUB
+INC        = -Isrc/LAMMPS_STUB -Isrc/main -Isrc/mathutils -Isrc/stiffness_kernels -Isrc/surfaces -Isrc/unittests/gtest-1.6.0 -Isrc/unittests/gtest-1.6.0/include
 LIB        = 
 
 SRC        = \
