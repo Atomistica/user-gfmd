@@ -18,9 +18,7 @@
 #include "gfmd_misc.h"
 #include "gfmd_solver.h"
 
-// #include "gfmd_analyzer.h"
 #include "gfmd_solver_static.h"
-#include "gfmd_solver_dynamic.h"
 
 #ifdef LMP_USER_CUDA 
 #include "gfmd_solver_cuda.h"
@@ -209,15 +207,8 @@ GFMDSolver *gfmd_solver_factory(char *keyword, LAMMPS *lmp, int narg,
     }
   }
 
-  /*
-  if (!strcmp(solver_name, "analyzer")) {
-    // solver = new GFMDAnalyzer(lmp, narg, carg, arg);
-  }
-  else */ if (!strcmp(solver_name, "static")) {
+  if (!strcmp(solver_name, "static")) {
     solver = new GFMDSolverStatic(lmp, narg, carg, arg);
-  }
-  else if (!strcmp(solver_name, "dynamic")) {
-    solver = new GFMDSolverDynamic(lmp, narg, carg, arg);
   }
 #ifdef LMP_USER_CUDA
   else if (!strcmp(solver_name, "static/cuda")) {
