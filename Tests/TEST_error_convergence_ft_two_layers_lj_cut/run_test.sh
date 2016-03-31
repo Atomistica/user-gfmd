@@ -5,7 +5,7 @@ lmp_exe="$@"
 
 mkdir -p $foldername
 
-for dstep in '0.001' '0.01'
+for dstep in '0.0001' '0.001' '0.01' '0.1'
 do
   echo $dstep
   $lmp_exe -in in.gf -var dstep \-$dstep 
