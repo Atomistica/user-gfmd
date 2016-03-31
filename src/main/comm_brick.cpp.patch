@@ -1,6 +1,6 @@
---- comm_brick.cpp	2015-11-16 15:07:07.158302896 -0500
-+++ comm_brick.cpp.orig	2015-11-16 15:06:50.568768896 -0500
-@@ -977,7 +977,7 @@
+--- comm_brick.cpp	2016-03-29 16:16:14.899064896 -0400
++++ comm_brick.cpp.orig	2016-03-29 14:54:36.061327532 -0400
+@@ -979,7 +979,7 @@
  
      if (sendproc[iswap] != me) {
        if (recvnum[iswap])
@@ -9,7 +9,7 @@
                    world,&request);
        if (sendnum[iswap])
          MPI_Send(buf_send,n,MPI_DOUBLE,sendproc[iswap],0,world);
-@@ -1020,7 +1020,7 @@
+@@ -1022,7 +1022,7 @@
  
      if (sendproc[iswap] != me) {
        if (sendnum[iswap])
