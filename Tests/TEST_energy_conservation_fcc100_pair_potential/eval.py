@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-sys.path += [ '../../../../tools/python' ]
+sys.path += [ '../../../tools/python' ]
 import pizza.log
 
 ###

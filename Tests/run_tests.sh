@@ -1,6 +1,7 @@
 #! /bin/bash
 
 touch ../../../tools/python/__init__.py
+touch ../../../tools/python/pizza/__init__.py
 export PYTHONPATH="$PYTHONPATH:$(readlink -f ../../../tools/python)"
 
 if [ -z "$1" ]; then
