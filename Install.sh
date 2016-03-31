@@ -60,6 +60,11 @@ add_or_rm () {
       fi
     fi
   fi
+
+  # Mode 3: Find files that have changed
+  if (test $mode = 3) then
+    diff -q $1 $srcdir/$file
+  fi
 }
 
 
