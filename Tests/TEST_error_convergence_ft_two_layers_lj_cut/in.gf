@@ -65,12 +65,6 @@ min_style       cg
 min_modify      dmax 0.3 line quadratic
 minimize        0.0 1.0e-7 100000 100000
 
-# Displace probe group and minimize (2/2)
-displace_atoms  probe1 move ${dstep} 0 ${dstep} units box
-min_style       cg
-min_modify      dmax 0.3 line quadratic
-minimize        0.0 1.0e-7 100000 100000
-
 # Store the final probe atom locations and forces
 unfix           2
 unfix           fixID1
