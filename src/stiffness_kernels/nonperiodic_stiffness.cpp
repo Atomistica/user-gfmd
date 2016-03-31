@@ -8,6 +8,8 @@
 #include "li_berger.h"
 #include "linearalgebra.h"
 
+#include "crystal_surface.h"
+
 #include "nonperiodic_stiffness.h"
 
 using namespace LiBerger;
@@ -34,6 +36,7 @@ NonperiodicStiffnessKernel::NonperiodicStiffnessKernel(int narg, int *carg,
     Poisson_number_ = 0.5;
     shear_modulus_ = 1.0;
 
+#if 0
     int i = *carg;
     if (i >= narg)
         error->all(FLERR, "Missing crystal surface.");
@@ -45,26 +48,31 @@ NonperiodicStiffnessKernel::NonperiodicStiffnessKernel(int narg, int *carg,
         sprintf(errstr, "Could not find crystal surface '%s'.", arg[i]);
         error->all(FLERR,errstr);
     }
+#endif
 
     if (*carg >= narg)
         error->all(FLERR, "Missing Poisson number.");
 
-    (*carg)++;
     Poisson_number_ = strtod(arg[*carg], &endptr);
     if (endptr == arg[*carg]) {
-      error_->all(FLERR, "NonperiodicStiffnessKernel::NonperiodicStiffnessKernel:"
-                       " Can't convert Poisson number nu to floating point.");
+        char errstr[1024];
+        sprintf(errstr, "Can't convert Poisson number '%s' to floating point.",
+                arg[*carg]);
+        error_->all(FLERR, errstr);
     }
+    (*carg)++;
 
     if (*carg >= narg)
         error->all(FLERR, "Missing shear modulus.");
 
-    (*carg)++;
     shear_modulus_ = strtod(arg[*carg], &endptr);
     if (endptr == arg[*carg]) {
-       error_->all(FLERR, "NonperiodicStiffnessKernel::NonperiodicStiffnessKernel:"
-                          " Can't convert shear modulus myu to floating point.");
+        char errstr[1024];
+        sprintf(errstr, "Can't convert shear modulus '%s' to floating point.",
+                arg[*carg]);
+        error_->all(FLERR, errstr);
     }
+    (*carg)++;
 
     // Can't really specify height in layers
     height_ = 1;
