@@ -50,6 +50,7 @@ FTStiffnessKernel::FTStiffnessKernel(int narg, int *carg, char **arg,
         error->all(FLERR,"Missing interaction model (force constants "
                    "definition).");
 
+    i = *carg;
     (*carg)++;
     force_constants_ = force_constants_factory(arg[i], narg, carg, arg,
                                                crystal_surface_, force,
