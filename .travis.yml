@@ -5,6 +5,7 @@ compiler:
 before_install:
   - sudo apt-get update -q
   - sh CI/install-mpi.sh openmpi
+  - sudo apt-get install libfftw3-3 libfftw3-dev
 install:
   - svn co -r 14624 svn://svn.lammps.org/lammps-ro/trunk/src lammps_src
   - cd lammps_src
