@@ -3,6 +3,12 @@ language: cpp
 compiler:
   - gcc
 install:
+  - svn co -r 14624 svn://svn.lammps.org/lammps-ro/trunk/src lammps_src
+  - cd lammps_src
+  - make yes-kspace
+  - make yes-manybody
+  - ln -s .. USER-GFMD
+  - cd USER-GFMD
   - make unittests
 script:
   - ./unittests
