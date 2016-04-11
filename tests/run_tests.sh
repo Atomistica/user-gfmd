@@ -1,9 +1,5 @@
 #! /bin/bash
 
-touch ../../../tools/python/__init__.py
-touch ../../../tools/python/pizza/__init__.py
-export PYTHONPATH="$PYTHONPATH:$(readlink -f ../../../tools/python)"
-
 if [ -z "$1" ]; then
   echo "Syntax: run_tests.sh <path-to-LAMMPS-executable> [-n<number-of-processes>]"
   exit 999
@@ -15,6 +11,14 @@ if [ ! -e "$1" ]; then
 fi
 
 CMD=$(readlink -f $1)
+
+echo "Running tests with exectuable $CMD."
+
+SRCDIR=$(dirname $CMD)
+
+touch $SRCDIR/../tools/python/__init__.py
+touch $SRCDIR/../tools/python/pizza/__init__.py
+export PYTHONPATH="$PYTHONPATH:$(readlink -f $SRCDIR/../tools/python)"
 
 np=""
 OPTIND=2
