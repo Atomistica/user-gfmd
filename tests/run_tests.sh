@@ -43,8 +43,6 @@ nfailed=0
 
 if [ -n "$np" ]; then
   CMD="mpirun -np $np $CMD"
-else
-  CMD="mpirun -np 1 $CMD"
 fi
 
 for i in TEST_*; do
