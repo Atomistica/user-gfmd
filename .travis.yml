@@ -2,6 +2,8 @@ sudo: true
 language: cpp
 compiler:
   - gcc
+env:
+  - LAMMPS_REV=14624
 before_install:
   - sudo apt-get update -q
   - sh CI/install-mpi.sh openmpi
@@ -9,8 +11,8 @@ before_install:
 install:
   - mkdir LAMMPS
   - cd LAMMPS
-  - svn co -r 14624 svn://svn.lammps.org/lammps-ro/trunk/src src
-  - svn co -r 14624 svn://svn.lammps.org/lammps-ro/trunk/tools tools
+  - svn co -r $LAMMPS_REV svn://svn.lammps.org/lammps-ro/trunk/src src
+  - svn co -r $LAMMPS_REV svn://svn.lammps.org/lammps-ro/trunk/tools tools
   - cd src
   - make yes-kspace
   - make yes-manybody
