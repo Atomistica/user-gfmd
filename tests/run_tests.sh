@@ -43,6 +43,8 @@ nfailed=0
 
 if [ -n "$np" ]; then
   CMD="mpirun -np $np $CMD"
+else
+  CMD="mpirun -np 1 $CMD"
 fi
 
 for i in TEST_*; do
@@ -79,5 +81,5 @@ let ntot=$nok+$nfailed
 echo "Ran $ntot tests; $nfailed failures, $nok successes."
 if [ $nfailed -gt 0 ]; then
   echo "WARNING: Some tests failed."
-  return 999
+  exit 999
 fi
