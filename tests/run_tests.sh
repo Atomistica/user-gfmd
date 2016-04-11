@@ -54,7 +54,7 @@ for i in TEST_*; do
   if [ -e lammps.in ]; then
     $CMD -in lammps.in > OUT
   else
-    sh run_test.sh $CMD > OUT
+    bssh run_test.sh $CMD > OUT
   fi
   if [ $? -eq 0 ]; then
     python eval.py
@@ -79,4 +79,5 @@ let ntot=$nok+$nfailed
 echo "Ran $ntot tests; $nfailed failures, $nok successes."
 if [ $nfailed -gt 0 ]; then
   echo "WARNING: Some tests failed."
+  return 999
 fi
