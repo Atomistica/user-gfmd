@@ -11,7 +11,7 @@ case $1 in
     sudo dpkg -i ./mpich_3.1-1ubuntu_amd64.deb;
     rm -f ./mpich_3.1-1ubuntu_amd64.deb;;
   openmpi) set -x;
-    sudo apt-get install openmpi-bin openmpi-dev;;
+    sudo apt-get install openmpi-bin libopenmpi-dev;;
   *)
     echo "Unknown MPI implementation:" $1; exit 1;;
 esac
