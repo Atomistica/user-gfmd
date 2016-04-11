@@ -25,4 +25,4 @@ install:
   - make unittests
 script:
   - ./unittests
-  - cd tests ; bash -x run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI
+  - cd tests ; ulimit -s unlimited ; bash -x run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI
