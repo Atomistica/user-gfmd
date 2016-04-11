@@ -8,7 +8,11 @@ install:
   - make yes-kspace
   - make yes-manybody
   - ln -s .. USER-GFMD
+  - make yes-user-gfmd
+  - cp USER-GFMD/CI/Makefile.CI MAKE/MINE
+  - make CI
   - cd USER-GFMD
   - make unittests
 script:
   - ./unittests
+  - cd tests ; sh run_tests.sh ../../lmp_CI
