@@ -8,7 +8,7 @@ env:
 before_install:
   - sudo apt-get update -q
   - sh CI/install-mpi.sh openmpi
-  - sudo apt-get install libfftw3-3 libfftw3-dev
+  - sudo apt-get -y install libfftw3-3 libfftw3-dev
 install:
   - mkdir LAMMPS
   - cd LAMMPS
