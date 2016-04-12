@@ -3,7 +3,7 @@ language: cpp
 compiler:
   - gcc
 env:
-  - LAMMPS_REV=14624
+  - LAMMPS_REV=14624 TRAVIS_PYTHON_VERSION=2.7
 before_install:
   - sudo apt-get update -q
 #  - sh CI/install-mpi.sh openmpi
