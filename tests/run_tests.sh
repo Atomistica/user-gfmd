@@ -52,9 +52,9 @@ for i in TEST_*; do
   cd $i
 
   if [ -e lammps.in ]; then
-    $CMD -in lammps.in
+    $CMD -in lammps.in > OUT
   else
-    bash -x run_test.sh $CMD
+    bash -x run_test.sh $CMD > OUT
   fi
   if [ $? -eq 0 ]; then
     python eval.py
