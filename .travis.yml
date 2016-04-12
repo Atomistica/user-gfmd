@@ -25,7 +25,6 @@ before_install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION numpy
   - source activate test-environment
-  - python setup.py install
 install:
   - mkdir USER-GFMD
   - mv * USER-GFMD || true
