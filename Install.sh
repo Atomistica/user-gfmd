@@ -9,9 +9,6 @@
 mode=$1
 
 
-echo "#define REV \"\$Id: REV `svnversion` \$\"" > REV
-
-
 ## Hard-coded install flags (0/1) specify which optional aspects of USER-GFMD to install.
 # These should NOT BE CHANGED while USER-GFMD is installed.  Type make no-USER-GFMD first.
 # (The concern: "make yes", then user turns off a flag, then later "make no" does not
