@@ -1,5 +1,4 @@
 sudo: required
-dist: trusty
 language: cpp
 compiler:
   - gcc
@@ -7,7 +6,7 @@ env:
   - LAMMPS_REV=14624
 before_install:
   - sudo apt-get update -q
-  - sh CI/install-mpi.sh openmpi
+#  - sh CI/install-mpi.sh openmpi
   - sudo apt-get -y install libfftw3-3 libfftw3-dev
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
