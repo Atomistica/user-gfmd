@@ -22,7 +22,7 @@ install:
   - cp USER-GFMD/CI/Makefile.CI_serial MAKE/MINE
   - make mpi-stubs
   - make CI_serial
-  - cd USER-GFMD
+  - cd ../..
   - make unittests
 script:
   - ./unittests
