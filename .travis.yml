@@ -10,6 +10,8 @@ before_install:
   - sh CI/install-mpi.sh openmpi
   - sudo apt-get -y install libfftw3-3 libfftw3-dev
 install:
+  - mkdir USER-GFMD
+  - mv * USER-GFMD
   - mkdir LAMMPS
   - cd LAMMPS
   - svn co -r $LAMMPS_REV svn://svn.lammps.org/lammps-ro/trunk/src src
@@ -17,12 +19,12 @@ install:
   - cd src
   - make yes-kspace
   - make yes-manybody
-  - ln -s ../.. USER-GFMD
+  - mv ../../USER-GFMD .
   - make yes-user-gfmd
   - cp USER-GFMD/CI/Makefile.CI_serial MAKE/MINE
   - make mpi-stubs
   - make CI_serial
-  - cd ../..
+  - cd USER-GFMD
   - make unittests
 script:
   - ./unittests
