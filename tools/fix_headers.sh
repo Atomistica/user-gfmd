@@ -6,7 +6,7 @@ DELIM="======================================================================"
 NDELIM1="N====================================================================="
 
 # .c/.h files
-for i in `find src -name "*.c*"` `find src -name "*.h"`; do
+for i in `find src -path src/unittests/gtest-1.6.0 -prune -o -name "*.c*"` `find src -path src/unittests/gtest-1.6.0 -prune -o -name "*.h"`; do
 
     if [ "$(grep $DELIM $i | wc -l)" -gt 0 ]; then
 
