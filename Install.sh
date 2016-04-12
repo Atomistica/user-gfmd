@@ -16,7 +16,7 @@ echo "#define REV \"\$Id: REV `svnversion` \$\"" > REV
 # These should NOT BE CHANGED while USER-GFMD is installed.  Type make no-USER-GFMD first.
 # (The concern: "make yes", then user turns off a flag, then later "make no" does not
 #               revert the patch for that component.)
-fftw3=0
+fftw3=1
 ncvar=0
 manybody=0
 usercuda=0
