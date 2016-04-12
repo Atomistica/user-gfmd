@@ -20,9 +20,10 @@ install:
   - ln -s ../.. USER-GFMD
   - make yes-user-gfmd
   - cp USER-GFMD/CI/Makefile.CI MAKE/MINE
-  - make CI
+  - make mpi-stubs
+  - make CI_serial
   - cd USER-GFMD
   - make unittests
 script:
   - ./unittests
-  - cd tests ; ulimit -s unlimited ; bash -x run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI
+  - cd tests ; bash -x run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI_serial
