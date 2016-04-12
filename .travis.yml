@@ -8,7 +8,7 @@ env:
 before_install:
   - sudo apt-get update -q
   - sh CI/install-mpi.sh openmpi
-  - sudo apt-get -y install libfftw3-3 libfftw3-dev python-numpy
+  - sudo apt-get -y install libfftw3-3 libfftw3-dev python-numpy python-scipy python3-numpy python3-scipy
 install:
   - mkdir USER-GFMD
   - mv * USER-GFMD || true
