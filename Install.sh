@@ -92,21 +92,23 @@ dependency_check () {
 # arg1 = filetopatch, arg2 = patchfile
 toggle_patch () {
 
+  fn=$(readlink -f $1)
+
   if ((test ! $mode = -1) && (test ! -e $1)) then
     echo "  Warning: USER-GFMD/Install.sh flag: Expected to un/patch file $1 which does not exist."
 
   else 
     case $mode in 
     0)
-      patch -R $1 $2
+      patch -R $fn $2
       ;;
     1)
-      patch $1 $2
+      patch $fn $2
       ;;
     2) 
       echo "(If a warning about previously-applied patch prints next, this file was"
       echo " already updated.  Do [n]ot assume reversed, do [n]ot apply anyway.)"
-      patch $1 $2
+      patch $fn $2
       ;;
     esac
   fi
