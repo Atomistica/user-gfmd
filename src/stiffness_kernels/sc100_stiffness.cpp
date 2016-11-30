@@ -165,12 +165,13 @@ SC100StiffnessKernel::~SC100StiffnessKernel()
 void SC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
 							    double qy,
 							    double_complex **D,
-							    double_complex *fac)
+                                                            double *xcshift,
+                                                            double *ycshift)
 {
   double cx, cy, sx, sy;
-  double_complex *U0;
-  double_complex *U;
-  double_complex *V;
+  double_complex *U0, *U, *V0, *V;
+
+  printf("%f %f\n", qx, qy);
 
   if (nu_ != 1) {
     error_->all(FLERR,"SC100StiffnessKernel::get_per_layer_dynamical_matrices:"
@@ -179,7 +180,8 @@ void SC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
 
   U0 = D[0];
   U  = D[1];
-  V  = D[2];
+  V0 = D[2];
+  V  = D[3];
 
   cx = cos(qx);
   cy = cos(qy);
@@ -219,6 +221,9 @@ void SC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
   
   MEL(dim_, V, 2, 0) = COMPLEX_NUMBER(0, sx);
   MEL(dim_, V, 2, 1) = COMPLEX_NUMBER(0, sy);
+
+  /* This is a pair potential and so V0=V */
+  memcpy(V0, V, 9*sizeof(double_complex)); // V0
 }
 
 } /* namespace */
