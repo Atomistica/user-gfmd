@@ -18,6 +18,13 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
+#ifdef STIFFNESS_KERNEL_CLASS
+
+StiffnessKernelStyle(nonperiodic,NonperiodicStiffnessKernel)
+
+#else
+
 #ifndef __NONPERIODIC_STIFFNESS_H
 #define __NONPERIODIC_STIFFNESS_H
 
@@ -71,5 +78,7 @@ class NonperiodicStiffnessKernel : public StiffnessKernel {
 };
 
 }
+
+#endif
 
 #endif

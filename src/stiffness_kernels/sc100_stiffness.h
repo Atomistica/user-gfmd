@@ -18,6 +18,14 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
+#ifdef STIFFNESS_KERNEL_CLASS
+
+StiffnessKernelStyle(sc100_explicit,SC100ExplicitStiffnessKernel)
+StiffnessKernelStyle(sc100,SC100StiffnessKernel)
+
+#else
+
 #ifndef __SC100_STIFFNESS_H
 #define __SC100_STIFFNESS_H
 
@@ -52,5 +60,7 @@ class SC100StiffnessKernel : public StiffnessKernel {
 };
 
 }
+
+#endif
 
 #endif

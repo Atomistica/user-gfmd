@@ -18,6 +18,13 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
+#ifdef STIFFNESS_KERNEL_CLASS
+
+StiffnessKernelWithForceStyle(ft,FTStiffnessKernel)
+
+#else
+
 #ifndef __FT_STIFFNESS_H
 #define __FT_STIFFNESS_H
 
@@ -127,5 +134,7 @@ class FTStiffnessKernel : public StiffnessKernel {
 };
 
 }
+
+#endif
 
 #endif

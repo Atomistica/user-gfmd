@@ -443,49 +443,29 @@ StiffnessKernel *stiffness_kernel_factory(char *keyword, int narg, int *carg,
   char errstr[120];
   StiffnessKernel *kernel = NULL;
 
-  if (!strcmp(keyword, "debug")) {
-    kernel = new DebugStiffnessKernel(narg, carg, arg, domain, memory, error);
-  }
-  else if (!strcmp(keyword, "chain")) {
-    kernel = new ChainStiffnessKernel(narg, carg, arg, domain, memory, error);
-  }
-  else if (!strcmp(keyword, "isotropic")) {
-    kernel = new IsotropicStiffnessKernel(narg, carg, arg, domain, memory,
-					  error);
-  }
-  else if (!strcmp(keyword, "isotropic/z")) {
-    kernel = new IsotropicZStiffnessKernel(narg, carg, arg, domain, memory,
-					   error);
-  }
+#define STIFFNESS_KERNEL_CLASS
+#define StiffnessKernelStyle(key, Class)                            \
+    if (!strcmp(keyword, #key)) {                                   \
+        kernel = new Class(narg, carg, arg, domain, memory, error); \
+    }
+#define StiffnessKernelWithForceStyle(key, Class)                            \
+    if (!strcmp(keyword, #key)) {                                   \
+        kernel = new Class(narg, carg, arg, domain, force, memory, error); \
+    }
+#include "debug_stiffness.h"
+#include "isotropic_stiffness.h"
 #ifdef GFMD_FFTW3
-  else if (!strcmp(keyword, "nonperiodic")) {
-    kernel = new NonperiodicStiffnessKernel(narg, carg, arg, domain, memory,
-                                            error);
-  }
+#include "nonperiodic_stiffness.h"
 #endif
-  else if (!strcmp(keyword, "sc100_explicit")) {
-    kernel = new SC100ExplicitStiffnessKernel(narg, carg, arg, domain, memory,
-					      error);
-  }
-  else if (!strcmp(keyword, "sc100")) {
-    kernel = new SC100StiffnessKernel(narg, carg, arg, domain, memory, error);
-  }
-  else if (!strcmp(keyword, "fcc100")) {
-    kernel = new FCC100StiffnessKernel(narg, carg, arg, domain, memory, error);
-  }
-  else if (!strcmp(keyword, "fcc100ft")) {
-    kernel = new FCC100FTStiffnessKernel(narg, carg, arg, domain, memory, 
-                                          error);
-  }
+#include "sc100_stiffness.h"
+#include "fcc100_stiffness.h"
+#include "fcc100ft_stiffness.h"
 #ifdef GFMD_MANYBODY
-  else if (!strcmp(keyword, "fcc100fteam")) {
-    kernel = new FCC100FTEAMStiffnessKernel(narg, carg, arg, domain, memory, 
-                                          error);
-  }
+#include "fcc100fteam_stiffness.h"
 #endif
-  else if (!strcmp(keyword, "ft")) {
-      kernel = new FTStiffnessKernel(narg, carg, arg, domain, force, memory, error);
-  }
+#include "ft_stiffness.h"
+#undef StiffnessKernelStyle
+#undef STIFFNESS_KERNEL_CLASS
 
   if (kernel) {
     if (strcmp(kernel->get_name(), keyword)) {

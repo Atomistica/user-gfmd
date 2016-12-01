@@ -18,6 +18,14 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
+#ifdef STIFFNESS_KERNEL_CLASS
+
+StiffnessKernelStyle(isotropic,IsotropicStiffnessKernel)
+StiffnessKernelStyle(isotropic/z,IsotropicStiffnessKernel)
+
+#else
+
 #ifndef __ISOTROPIC_STIFFNESS_H
 #define __ISOTROPIC_STIFFNESS_H
 
@@ -56,5 +64,7 @@ class IsotropicZStiffnessKernel : public StiffnessKernel {
 };
 
 }
+
+#endif
 
 #endif
