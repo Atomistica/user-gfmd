@@ -18,6 +18,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
 #include <algorithm>
 #include <iostream>
 #include <numeric>
@@ -715,4 +716,3 @@ CrystalSurface *crystal_surface_factory(char *keyword, int narg, int *carg,
 
   return surface;
 }
-
