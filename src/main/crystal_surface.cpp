@@ -704,6 +704,7 @@ CrystalSurface *crystal_surface_factory(char *keyword, int narg, int *carg,
 #include "fcc111_surface.h"
 #include "sc100_surface.h"
 #undef CrystalSurfaceStyle
+#undef CRYSTAL_SURFACE_CLASS
 
   if (surface) {
     if (strcmp(surface->get_name(), keyword)) {
