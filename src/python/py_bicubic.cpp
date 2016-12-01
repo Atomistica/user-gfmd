@@ -22,15 +22,18 @@
  * A wrapper around Table2D to be used from within Python+Numpy
  */
 
-#include "Python.h"
-#include "numpy/arrayobject.h"
+#include <Python.h>
+#define PY_ARRAY_UNIQUE_SYMBOL MATSCIPY_ARRAY_API
+#define NO_IMPORT_ARRAY
+#include <numpy/arrayobject.h>
+
 #include <math.h>
 
 #include "py_bicubic.h"
 
 /* Allocate new instance */
 
-static PyObject *
+PyObject *
 bicubic_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   bicubic_t *self;
@@ -47,7 +50,7 @@ bicubic_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
 /* Release allocated memory */
 
-static void
+void
 bicubic_dealloc(bicubic_t *self)
 {
   if (self->map_)
@@ -57,13 +60,13 @@ bicubic_dealloc(bicubic_t *self)
   if (self->error_)
     delete self->error_;
 
-  self->ob_type->tp_free((PyObject*) self);
+  Py_TYPE(self)->tp_free((PyObject*) self);
 }
 
 
 /* Initialize instance */
 
-static int
+int
 bicubic_init(bicubic_t *self, PyObject *args,
 		      PyObject *kwargs)
 {
@@ -101,7 +104,7 @@ bicubic_init(bicubic_t *self, PyObject *args,
 
 /* Call object */
 
-static PyObject *
+PyObject *
 bicubic_call(bicubic_t *self, PyObject *args,
 		      PyObject *kwargs)
 {
@@ -144,8 +147,8 @@ bicubic_call(bicubic_t *self, PyObject *args,
 
     return py_v;
   }
-  else if (( PyFloat_Check(py_x)||PyInt_Check(py_x)||PyLong_Check(py_x) ) &&
-	   ( PyFloat_Check(py_y)||PyInt_Check(py_y)||PyLong_Check(py_y) )) {
+  else if (( PyFloat_Check(py_x)||PyLong_Check(py_x) ) &&
+	   ( PyFloat_Check(py_y)||PyLong_Check(py_y) )) {
     /* x and y are specified separately, and are scalars */
 
     double v, dx, dy;
@@ -208,8 +211,7 @@ bicubic_call(bicubic_t *self, PyObject *args,
 /* Class declaration */
 
 PyTypeObject bicubic_type = {
-    PyObject_HEAD_INIT(NULL)
-    0,                                          /* ob_size */
+    PyVarObject_HEAD_INIT(NULL, 0)
     "bicubic.Bicubic",                          /* tp_name */
     sizeof(bicubic_t),                          /* tp_basicsize */
     0,                                          /* tp_itemsize */
@@ -249,21 +251,3 @@ PyTypeObject bicubic_type = {
     bicubic_new,                                /* tp_new */
 };
 
-
-extern "C"
-void initbicubic()  {
-  PyObject *m;
-
-  m = Py_InitModule("bicubic", NULL);
-  if (!m)
-    return;
-
-  import_array();
-
-  if (PyType_Ready(&bicubic_type) < 0)
-    return;
-
-  Py_INCREF(&bicubic_type);
-  PyModule_AddObject(m, "Bicubic",
-		     (PyObject *) &bicubic_type);
-}

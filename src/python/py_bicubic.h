@@ -18,8 +18,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
-#ifndef __INTERPOLATED_MAP_H
-#define __INTERPOLATED_MAP_H
+
+#ifndef __PY_BICUBIC_H
+#define __PY_BICUBIC_H
 
 #include <Python.h>
 
@@ -36,5 +37,7 @@ typedef struct {
   LAMMPS_NS::Table2D *map_;
 
 } bicubic_t;
+
+extern PyTypeObject bicubic_type;
 
 #endif

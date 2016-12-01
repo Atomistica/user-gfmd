@@ -22,8 +22,11 @@
  * A wrapper around Table2D to be used from within Python+Numpy
  */
 
-#include "Python.h"
-#include "numpy/arrayobject.h"
+#include <Python.h>
+#define PY_ARRAY_UNIQUE_SYMBOL MATSCIPY_ARRAY_API
+#define NO_IMPORT_ARRAY
+#include <numpy/arrayobject.h>
+
 #include <math.h>
 
 #include "py_surface_stiffness.h"
@@ -32,7 +35,7 @@
 
 /* Allocate new instance */
 
-static PyObject *
+PyObject *
 surface_stiffness_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
   surface_stiffness_t *self;
@@ -42,6 +45,7 @@ surface_stiffness_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
   self->error_ = NULL;
   self->memory_ = NULL;
   self->domain_ = NULL;
+  self->force_ = NULL;
   self->kernel_ = NULL;
 
   return (PyObject *) self;
@@ -50,7 +54,7 @@ surface_stiffness_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
 /* Release allocated memory */
 
-static void
+void
 surface_stiffness_dealloc(surface_stiffness_t *self)
 {
   if (self->kernel_)
@@ -61,8 +65,10 @@ surface_stiffness_dealloc(surface_stiffness_t *self)
     delete self->memory_;
   if (self->error_)
     delete self->error_;
+  if (self->force_)
+    delete self->force_;
 
-  self->ob_type->tp_free((PyObject*) self);
+  Py_TYPE(self)->tp_free((PyObject*) self);
 }
 
 
@@ -70,7 +76,7 @@ surface_stiffness_dealloc(surface_stiffness_t *self)
 
 #define MAX_ARG 1024
 
-static int
+int
 surface_stiffness_init(surface_stiffness_t *self, PyObject *args,
 		      PyObject *kwargs)
 {
@@ -101,10 +107,12 @@ surface_stiffness_init(surface_stiffness_t *self, PyObject *args,
   self->memory_ = new LAMMPS_NS::Memory(self->error_);
   self->domain_ = new LAMMPS_NS::Domain();
   self->domain_->set_cell(sx, sy, 1.0);
+  self->force_ = new LAMMPS_NS::Force();
 
   carg = 0;
   self->kernel_ = LAMMPS_NS::stiffness_kernel_factory(kernel_str, narg, &carg,
                                                       arg, self->domain_,
+                                                      self->force_,
                                                       self->memory_,
                                                       self->error_);
 
@@ -116,7 +124,7 @@ surface_stiffness_init(surface_stiffness_t *self, PyObject *args,
 
 /* Call object */
 
-static PyObject *
+PyObject *
 surface_stiffness_call(surface_stiffness_t *self, PyObject *args,
 		      PyObject *kwargs)
 {
@@ -219,7 +227,7 @@ surface_stiffness_call(surface_stiffness_t *self, PyObject *args,
 
 /* Set model parameters */
 
-static PyObject *
+PyObject *
 surface_stiffness_set_parameters(surface_stiffness_t *self, PyObject *args,
 				 PyObject *kwargs)
 {
@@ -251,10 +259,10 @@ surface_stiffness_set_parameters(surface_stiffness_t *self, PyObject *args,
 
 /* Methods declaration */
 
-static PyMethodDef surface_stiffness_methods[] = {
+PyMethodDef surface_stiffness_methods[] = {
   { "set_parameters",
     (PyCFunction) surface_stiffness_set_parameters, METH_VARARGS,
-    "Set model paramters." },
+    "Set model parameters." },
   { NULL, NULL, 0, NULL }  /* Sentinel */
 };
 
@@ -262,8 +270,7 @@ static PyMethodDef surface_stiffness_methods[] = {
 /* Class declaration */
 
 PyTypeObject surface_stiffness_type = {
-    PyObject_HEAD_INIT(NULL)
-    0,                                          /* ob_size */
+    PyVarObject_HEAD_INIT(NULL, 0)
     "surface_stiffness.StiffnessKernel",        /* tp_name */
     sizeof(surface_stiffness_t),                /* tp_basicsize */
     0,                                          /* tp_itemsize */
@@ -303,21 +310,3 @@ PyTypeObject surface_stiffness_type = {
     surface_stiffness_new,                      /* tp_new */
 };
 
-
-extern "C"
-void initsurface_stiffness()  {
-  PyObject *m;
-
-  m = Py_InitModule("surface_stiffness", NULL);
-  if (!m)
-    return;
-
-  import_array();
-
-  if (PyType_Ready(&surface_stiffness_type) < 0)
-    return;
-
-  Py_INCREF(&surface_stiffness_type);
-  PyModule_AddObject(m, "SurfaceStiffness",
-		     (PyObject *) &surface_stiffness_type);
-}

@@ -18,8 +18,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
-#ifndef __INTERPOLATED_MAP_H
-#define __INTERPOLATED_MAP_H
+
+#ifndef __PY_SURFACE_STIFFNESS_H
+#define __PY_SURFACE_STIFFNESS_H
 
 #include <Python.h>
 
@@ -34,9 +35,12 @@ typedef struct {
   LAMMPS_NS::Error *error_;
   LAMMPS_NS::Memory *memory_;
   LAMMPS_NS::Domain *domain_;
+  LAMMPS_NS::Force *force_;
 
   LAMMPS_NS::StiffnessKernel *kernel_;
 
 } surface_stiffness_t;
+
+extern PyTypeObject surface_stiffness_type;
 
 #endif
