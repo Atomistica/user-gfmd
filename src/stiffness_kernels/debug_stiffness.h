@@ -33,8 +33,8 @@ namespace LAMMPS_NS {
 
 class DebugStiffnessKernel : public StiffnessKernel {
  public:
-   DebugStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~DebugStiffnessKernel();
+  DebugStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
+  virtual ~DebugStiffnessKernel();
 
   virtual void get_per_layer_dynamical_matrices(double, double,
                                                 double_complex **,
@@ -47,8 +47,8 @@ class DebugStiffnessKernel : public StiffnessKernel {
 
 class ChainStiffnessKernel : public StiffnessKernel {
  public:
-    ChainStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~ChainStiffnessKernel();
+  ChainStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
+  virtual ~ChainStiffnessKernel();
 
   virtual void get_per_layer_dynamical_matrices(double, double,
                                                 double_complex **,

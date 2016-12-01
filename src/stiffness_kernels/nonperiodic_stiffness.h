@@ -34,7 +34,7 @@ namespace LAMMPS_NS {
 class NonperiodicStiffnessKernel : public StiffnessKernel {
  public:
     NonperiodicStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-    ~NonperiodicStiffnessKernel();
+    virtual ~NonperiodicStiffnessKernel();
   
     virtual void get_stiffness_matrix(double, double, double_complex *,
                                       double_complex dU);

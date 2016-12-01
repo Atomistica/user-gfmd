@@ -34,7 +34,7 @@ namespace LAMMPS_NS {
 class FCC100StiffnessKernel : public StiffnessKernel {
  public:
     FCC100StiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~FCC100StiffnessKernel();
+  virtual ~FCC100StiffnessKernel();
 
   virtual void set_parameters(double *);
 

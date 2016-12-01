@@ -33,8 +33,8 @@ namespace LAMMPS_NS {
 
 class IsotropicStiffnessKernel : public StiffnessKernel {
  public:
-    IsotropicStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~IsotropicStiffnessKernel();
+  IsotropicStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
+  virtual ~IsotropicStiffnessKernel();
 
   virtual void get_stiffness_matrix(double, double, double_complex *,
                                     double_complex dU=0.0);
@@ -47,7 +47,7 @@ class IsotropicStiffnessKernel : public StiffnessKernel {
 class IsotropicZStiffnessKernel : public StiffnessKernel {
  public:
   IsotropicZStiffnessKernel(int, int *, char **, Domain *, Memory *, Error *);
-  ~IsotropicZStiffnessKernel();
+  virtual ~IsotropicZStiffnessKernel();
 
   virtual void get_stiffness_matrix(double, double, double_complex *); 
 
