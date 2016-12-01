@@ -171,8 +171,6 @@ void SC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
   double cx, cy, sx, sy;
   double_complex *U0, *U, *V0, *V;
 
-  printf("%f %f\n", qx, qy);
-
   if (nu_ != 1) {
     error_->all(FLERR,"SC100StiffnessKernel::get_per_layer_dynamical_matrices:"
 		"Only works for nu == 1.");
