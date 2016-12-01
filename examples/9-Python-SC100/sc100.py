@@ -40,7 +40,7 @@ for (sym1, (x1, y1)), (sym2, (x2, y2)) in zip(special_points[:-1], special_point
 plt.xticks(np.arange(len(special_points)), [name for name, pts in special_points])
 plt.gca().xaxis.grid(True)
 plt.ylabel('Stiffness, $a_0 \Phi_{zz}/E$')
-plt.xlabel('Wavevector, $q$')
+plt.xlabel('Wavevector, $a_0 q$')
 plt.legend(loc='best')
 plt.tight_layout()
 plt.savefig('sc100.pdf')
