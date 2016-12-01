@@ -35,7 +35,7 @@ class SC100ExplicitStiffnessKernel : public StiffnessKernel {
  public:
   SC100ExplicitStiffnessKernel(int, int *, char **, Domain *, Memory *,
 			       Error *);
-  ~SC100ExplicitStiffnessKernel();
+  virtual ~SC100ExplicitStiffnessKernel();
 
   virtual void get_stiffness_matrix(double, double, double_complex *);
 };
@@ -43,12 +43,12 @@ class SC100ExplicitStiffnessKernel : public StiffnessKernel {
 
 class SC100StiffnessKernel : public StiffnessKernel {
  public:
-   SC100StiffnessKernel(int, int *, char **,  Domain *, Memory *, Error *);
-  ~SC100StiffnessKernel();
+  SC100StiffnessKernel(int, int *, char **,  Domain *, Memory *, Error *);
+  virtual ~SC100StiffnessKernel();
 
   virtual void get_per_layer_dynamical_matrices(double, double, 
 						double_complex **,
-						double_complex *);
+						double *, double *);
 };
 
 }
