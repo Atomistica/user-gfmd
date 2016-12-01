@@ -35,6 +35,7 @@ import versioneer
 
 inc_dirs = [ np.get_include(),
              'src/LAMMPS_STUB',
+             'src/force_constants',
              'src/main',
              'src/mathutils',
              'src/stiffness_kernels',
@@ -63,14 +64,17 @@ setup(
         Extension(
             '_gfmd',
             ['src/LAMMPS_STUB/memory.cpp',
+             'src/main/force_constants.cpp',
              'src/main/crystal_surface.cpp',
              'src/main/surface_stiffness.cpp',
              'src/mathutils/table2d.cpp',
              'src/mathutils/linearalgebra.cpp',
              'src/stiffness_kernels/debug_stiffness.cpp',
-             #'src/stiffness_kernels/ft_stiffness.cpp',
+             'src/stiffness_kernels/ft_stiffness.cpp',
              'src/stiffness_kernels/isotropic_stiffness.cpp',
              'src/stiffness_kernels/sc100_stiffness.cpp',
+             'src/stiffness_kernels/fcc100_stiffness.cpp',
+             'src/stiffness_kernels/fcc100ft_stiffness.cpp',
              'src/surfaces/dia100_surface.cpp',
              'src/surfaces/dia111_surface.cpp',
              'src/surfaces/fcc100_surface.cpp',
@@ -80,7 +84,8 @@ setup(
              'src/python/py_bicubic.cpp',
              'src/python/py_surface_stiffness.cpp'
             ],
-            include_dirs = inc_dirs
+            include_dirs = inc_dirs,
+            define_macros = [('PYTHON', None)]
             )
         ],
     )

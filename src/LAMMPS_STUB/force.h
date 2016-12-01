@@ -40,6 +40,15 @@
 namespace LAMMPS_NS {
 
 class Force {
+ public:
+    char *pair_style;
+
+    Force() {
+        pair_style = strdup("PYTHON");
+    }
+    ~Force() {
+        free(pair_style);
+    }
 };
 
 }

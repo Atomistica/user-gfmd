@@ -31,6 +31,7 @@ StiffnessKernelWithForceStyle(ft,FTStiffnessKernel)
 #include "crystal_surface.h"
 #include "domain.h"
 #include "error.h"
+#include "force.h"
 #include "force_constants.h"
 #include "linearalgebra.h"
 #include "memory.h"

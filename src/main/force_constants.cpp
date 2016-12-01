@@ -21,10 +21,12 @@
 #include <string.h>
 
 #include "force_constants.h"
+#ifndef PYTHON
 #include "fc_lj_cut.h"
 #include "fc_lj_cut_fd.h"
 #include "fc_lj_smooth.h"
 #include "fc_pair_potential.h"
+#endif
 
 #ifdef GFMD_MANYBODY
 #include "fc_eam.h"
@@ -117,10 +119,12 @@ ForceConstants *force_constants_factory(char *keyword, int narg, int *carg,
         fc = new Class(narg, carg, arg, surface, force, memory, error);  \
     }
 
+#ifndef PYTHON
 #include "fc_lj_cut.h"
 #include "fc_lj_cut_fd.h"
 #include "fc_lj_smooth.h"
 #include "fc_pair_potential.h"
+#endif
 
 #ifdef GFMD_MANYBODY
 #include "fc_eam.h"
