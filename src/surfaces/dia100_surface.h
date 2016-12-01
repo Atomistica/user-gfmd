@@ -31,8 +31,8 @@ CrystalSurfaceStyle(dia100,Diamond100Surface)
 
 class Diamond100Surface : public CrystalSurface {
  public:
-	Diamond100Surface(int, int *, char **, Error *);
-	Diamond100Surface(double, int, Error *);
+    Diamond100Surface(int, int *, char **, Error *);
+    Diamond100Surface(double, int, Error *);
 
     /*!
      * Dump generic text info to file
