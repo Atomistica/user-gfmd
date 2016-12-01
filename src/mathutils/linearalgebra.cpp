@@ -615,7 +615,7 @@ double string_to_double(const char *file, int line, Error *error, char *str)
 void read_double(Error *error, int narg, char **arg, int *carg, double *ptr,
                  const char *description, double rangemin, double rangemax,
                  int prnt) {
-    if (prnt) printf(description);
+    if (prnt) printf("%s", description);
 
     if (*carg >= narg)
         error->all(FLERR,"Missing input value.\n");
@@ -646,7 +646,7 @@ void read_integer(Error *error, int narg, char **arg, int *carg, int *ptr,
                   const char *description, int rangemin, int rangemax,
                   bool prnt)
 {
-    if (prnt) printf(description);
+    if (prnt) printf("%s", description);
     
     if (*carg >= narg)
         error->all(FLERR,"Missing input value.\n");
