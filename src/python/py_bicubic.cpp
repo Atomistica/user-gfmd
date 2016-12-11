@@ -18,6 +18,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
    ====================================================================== */
+
 /*
  * A wrapper around Table2D to be used from within Python+Numpy
  */
