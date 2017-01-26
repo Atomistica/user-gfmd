@@ -209,8 +209,6 @@ void FixContactSphere::post_force(int vflag)
   int *mask = atom->mask;
   int nlocal = atom->nlocal;
 
-  printf("%s %s %s\n", cxvar, cyvar, czvar);
-
   if (cxvar)  cx = input->variable->compute_equal(cxvar);
   if (cyvar)  cy = input->variable->compute_equal(cyvar);
   if (czvar)  cz = input->variable->compute_equal(czvar);
