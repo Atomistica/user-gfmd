@@ -28,7 +28,7 @@ Compiling this package along with LAMMPS requires the FFT3d wrappers from the
 kspace package of LAMMPS to be included.
 
 You should also append 'user-gfmd' to the 'PACKUSER' variable in the file of
-src/Makefile before invoke `make yes-user`. Note that `make yes-user-gmfd` does
+src/Makefile before invoke `make yes-user`. Note that `make yes-user-gfmd` does
 not work if used with the USER-CUDA package. If used with USER-CUDA, go into
 the USER-GFMD directory and execute `sh Install.sh 1` manually.
 
