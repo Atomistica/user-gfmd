@@ -30,7 +30,7 @@ install:
   - mv * USER-GFMD || true
   - wget https://github.com/lammps/lammps/archive/r$LAMMPS_REV.tar.gz
   - tar -xzf r$LAMMPS_REV.tar.gz
-  - cd lammps-r$LAMMPS_REV.tar.gz
+  - cd lammps-r$LAMMPS_REV
   - cd src
   - make yes-kspace
   - make yes-manybody
