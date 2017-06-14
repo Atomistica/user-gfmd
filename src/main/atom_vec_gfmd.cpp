@@ -86,7 +86,7 @@ void AtomVecGFMD::grow(int n)
   f = memory->grow(atom->f,nmax,3,"atom:f");
 
   xeq = memory->grow(atom->xeq,nmax,3,"atom:xeq");  
-  gid = memory->grow(atom->gid,nmax,"atom:xeq");
+  gid = memory->grow(atom->gid,nmax,"atom:gid");
 
   if (atom->nextra_grow)
     for (int iextra = 0; iextra < atom->nextra_grow; iextra++) 
