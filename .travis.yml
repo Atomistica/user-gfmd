@@ -28,9 +28,10 @@ before_install:
 install:
   - mkdir USER-GFMD
   - mv * USER-GFMD || true
-  - wget https://github.com/lammps/lammps/archive/r$LAMMPS_REV.tar.gz
-  - tar -xzf r$LAMMPS_REV.tar.gz
-  - cd lammps-r$LAMMPS_REV
+  - mkdir LAMMPS
+  - cd LAMMPS
+  - svn co -r $LAMMPS_REV https://github.com/lammps/lammps.git/trunk/src src
+  - svn co -r $LAMMPS_REV https://github.com/lammps/lammps.git/trunk/tools tools
   - cd src
   - make yes-kspace
   - make yes-manybody
@@ -45,4 +46,4 @@ script:
   - ./unittests
 #  - $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI_serial -h
   - cd tests
-  - bash run_tests.sh $TRAVIS_BUILD_DIR/lammps-r$LAMMPS_REV/src/lmp_CI_serial
+  - bash run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI_serial
