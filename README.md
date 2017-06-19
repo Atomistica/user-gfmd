@@ -7,8 +7,8 @@ an elastic half-space from the dynamical matrix.
 
 This is an implementation of the method described in:
 
-- C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)
-- L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)
+- [C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)](http://dx.doi.org/10.1103/PhysRevB.74.075420)
+- [L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)](http://dx.doi.org/10.1103/PhysRevB.86.075459)
 
 If you use this code, please cite these publications.
 
