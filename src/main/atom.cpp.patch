@@ -1,47 +1,20 @@
-/* ======================================================================
-   USER-GFMD - Green's function molecular dynamics for LAMMPS
-   https://github.com/Atomistica/user-gfmd
-
-   Copyright (2011-2016) Lars Pastewka <lars.pastewka@kit.edu>, Tristan A. Sharp
-   and others. See the AUTHORS file in the top-level USER-GFMD directory.
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 2 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-   ====================================================================== */
---- oldd	2016-03-29 14:52:33.852489000 -0400
-+++ atom.cpp	2016-03-29 14:56:21.646602896 -0400
-@@ -69,6 +69,9 @@
-   // initialize atom arrays
-   // customize by adding new array
+diff --git a/src/atom.cpp b/src/atom.cpp
+index ecb82993c..6abbf2ea6 100644
+--- a/src/atom.cpp
++++ b/src/atom.cpp
+@@ -105,6 +105,9 @@ Atom::Atom(LAMMPS *lmp) : Pointers(lmp)
+   // --------------------------------------------------------------------
+   // 1st customization section: customize by adding new per-atom variables
  
-+  gid = NULL;
-+  xeq = NULL;
++  gid = nullptr;
++  xeq = nullptr;
 +
-   tag = NULL;
-   type = mask = NULL;
-   image = NULL;
-@@ -149,6 +152,8 @@
-   // initialize atom style and array existence flags
-   // customize by adding new flag
- 
-+  gfmd_flag = 0;
-+
-   sphere_flag = peri_flag = electron_flag = 0;
-   wavepacket_flag = sph_flag = 0;
- 
-@@ -228,6 +233,9 @@
-   // delete atom arrays
-   // customize by adding new array
+   tag = nullptr;
+   type = mask = nullptr;
+   image = nullptr;
+@@ -274,6 +277,9 @@ Atom::~Atom()
+   memory->destroy(next);
+   memory->destroy(permute);
  
 +  memory->destroy(gid);
 +  memory->destroy(xeq);
@@ -49,12 +22,12 @@
    memory->destroy(tag);
    memory->destroy(type);
    memory->destroy(mask);
-@@ -387,6 +395,8 @@
-   // may have been set by old avec
-   // customize by adding new flag
+@@ -599,6 +605,8 @@ void Atom::set_atomflag_defaults()
+   // 3rd customization section: customize by adding new flag
+   // identical list as 2nd customization in atom.h
  
 +  gfmd_flag = 0;
 +
-   sphere_flag = peri_flag = electron_flag = 0;
+   sphere_flag = ellipsoid_flag = line_flag = tri_flag = body_flag = 0;
+   peri_flag = electron_flag = 0;
    wavepacket_flag = sph_flag = 0;
- 
