@@ -27,8 +27,6 @@
 #include "linearalgebra.h"
 #include "memory.h"
 
-using namespace std;
-
 class CrystalSurface;
 
 namespace LAMMPS_NS {
