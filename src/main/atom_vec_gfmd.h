@@ -49,5 +49,7 @@ class AtomVecGFMD : public AtomVec {
   AtomVecGFMD(class LAMMPS *);
 };
 
+}
+
 #endif
 #endif
