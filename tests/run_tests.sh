@@ -57,7 +57,7 @@ for i in TEST_*; do
     bash run_test.sh $CMD > OUT
   fi
   if [ $? -eq 0 ]; then
-    python eval.py
+    python2 eval.py
     if [ $? -eq 0 ]; then
       echo ".ok."
       let nok=$nok+1
