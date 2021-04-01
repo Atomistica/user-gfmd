@@ -23,7 +23,7 @@ AtomVecGFMD::AtomVecGFMD(LAMMPS *lmp) : AtomVec(lmp)
   molecular = Atom::ATOMIC;
   mass_type = PER_TYPE;
 
-  atom->q_flag = 1;
+  atom->gfmd_flag = 1;
 
   // strings with peratom variables to include in each AtomVec method
   // strings cannot contain fields in corresponding AtomVec default strings
