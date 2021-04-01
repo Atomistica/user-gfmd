@@ -1,23 +1,27 @@
 diff --git a/src/atom.h b/src/atom.h
-index bc69d3b27..3dac5acfd 100644
+index bc69d3b27..cf23b577e 100644
 --- a/src/atom.h
 +++ b/src/atom.h
-@@ -64,6 +64,9 @@ class Atom : protected Pointers {
-   // 1st customization section: customize by adding new per-atom variable
-   // per-atom vectors and arrays
+@@ -157,6 +157,11 @@ class Atom : protected Pointers {
+   double *rho,*drho,*esph,*desph,*cv;
+   double **vest;
  
++  // USER-GFMD package
++
 +  bigint *gid;
 +  double **xeq;
 +
-   tagint *tag;
-   int *type,*mask;
-   imageint *image;
-@@ -166,6 +169,8 @@ class Atom : protected Pointers {
-   // most are existence flags for per-atom vectors and arrays
-   // 1 if variable is used, 0 if not
+   // end of customization section
+   // --------------------------------------------------------------------
  
+@@ -190,6 +195,10 @@ class Atom : protected Pointers {
+   int contact_radius_flag,smd_data_9_flag,smd_stress_flag;
+   int eff_plastic_strain_flag,eff_plastic_strain_rate_flag;
+ 
++  // USER-GFMD package
++
 +  int gfmd_flag;
 +
-   int sphere_flag,ellipsoid_flag,line_flag,tri_flag,body_flag;
-   int peri_flag,electron_flag;
-   int wavepacket_flag,sph_flag;
+   // Peridynamics scale factor, used by dump cfg
+ 
+   double pdscale;
