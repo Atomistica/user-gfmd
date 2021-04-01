@@ -24,12 +24,12 @@ import sys
 
 import numpy as np
 
-sys.path += [ '../../../tools/python' ]
-import pizza.log
+sys.path += [ '..' ]
+import lammps_log
 
 ###
 
-l = pizza.log.log('log.lammps')
+l = lammps_log.log('log.lammps')
 e = l.get('TotEng')
 
 de = np.max(np.abs(e-np.mean(e)))
