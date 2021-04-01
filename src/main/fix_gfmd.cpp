@@ -450,6 +450,7 @@ FixGFMD::FixGFMD(LAMMPS *lmp, int narg, char **arg)
   /*
    * enable to return original forces before they are changed
    */
+  energy_global_flag = 1;
   extvector = 1;
   scalar_flag = 1;
   vector_flag = 1;
@@ -501,7 +502,6 @@ int FixGFMD::setmask()
   mask |= POST_FORCE;
   mask |= MIN_PRE_FORCE;
   mask |= MIN_POST_FORCE;
-  mask |= THERMO_ENERGY;
   return mask;
 }
 

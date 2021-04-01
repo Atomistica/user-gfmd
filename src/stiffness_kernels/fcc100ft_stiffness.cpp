@@ -445,7 +445,7 @@ void FCC100FTStiffnessKernel::get_per_layer_dynamical_matrices(double qx,
     // Assuming first two components of rel pos vector gives unit cell translation
     // Could extend operators available in linearalgebra.h or break down this expression:
     // contrib = (para_k * eij_eij + perp_k * perpeij_eij ) * exp(-I *( qx * rij[0] + qy * rij[1] ));
-    phase = -1.0 * (qx * rij[0] + qy * rij[1]) * I;
+    phase = -1.0 * (qx * rij[0] + qy * rij[1]) * cI;
     contrib = ( (eij_eij * (double_complex)(-para_k)) 
 	+ (perpeij_eij * (double_complex)(-perp_k))) * exp(phase); // TAS3 something here is going wrong that affects q=0 V and W like r->-r that changes the sum magnitude 10% of x-x 
 

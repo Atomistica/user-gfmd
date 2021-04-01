@@ -343,12 +343,12 @@ void FCC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
 
   /* off-diagonal of V */ // (Eqn A16, A17)
   MEL(ndof_, V, 0, 1) =      k_[0]*sx2*sy2       - kappa_[0]*sx2*sy2;
-  MEL(ndof_, V, 0, 2) =  z_*(k_[0]*sqrt2*sx2*cy2 - kappa_[0]*sqrt2*sx2*cy2)*I;
-  MEL(ndof_, V, 1, 2) =  z_*(k_[0]*sqrt2*cx2*sy2 - kappa_[0]*sqrt2*cx2*sy2)*I;
+  MEL(ndof_, V, 0, 2) =  z_*(k_[0]*sqrt2*sx2*cy2 - kappa_[0]*sqrt2*sx2*cy2)*cI;
+  MEL(ndof_, V, 1, 2) =  z_*(k_[0]*sqrt2*cx2*sy2 - kappa_[0]*sqrt2*cx2*sy2)*cI;
   
   MEL(ndof_, V, 1, 0) =      k_[0]*sx2*sy2       - kappa_[0]*sx2*sy2;
-  MEL(ndof_, V, 2, 0) =  z_*(k_[0]*sqrt2*sx2*cy2 - kappa_[0]*sqrt2*sx2*cy2)*I;
-  MEL(ndof_, V, 2, 1) =  z_*(k_[0]*sqrt2*cx2*sy2 - kappa_[0]*sqrt2*cx2*sy2)*I;
+  MEL(ndof_, V, 2, 0) =  z_*(k_[0]*sqrt2*sx2*cy2 - kappa_[0]*sqrt2*sx2*cy2)*cI;
+  MEL(ndof_, V, 2, 1) =  z_*(k_[0]*sqrt2*cx2*sy2 - kappa_[0]*sqrt2*cx2*sy2)*cI;
 
   if (nu_ >= 2) {
     /*
@@ -418,16 +418,16 @@ void FCC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
     MEL(ndof_, V, 0, 1) +=    -k_[2]*(-2-2*(cx+cy))*sx2*sy2	
                               -kappa_[2]*(2+2*(cx+cy))*sx2*sy2;
     MEL(ndof_, V, 0, 2) +=z_*(-k_[2]*1/3*sqrt2*cy2*(-2-2*(3*cx+cy))*sx2
-                              -kappa_[2]*1/3*sqrt2*cy2*(2+2*(3*cx+cy))*sx2)*I;
+                              -kappa_[2]*1/3*sqrt2*cy2*(2+2*(3*cx+cy))*sx2)*cI;
     MEL(ndof_, V, 1, 2) +=z_*(-k_[2]*1/3*sqrt2*cx2*(-2-2*(cx+3*cy))*sy2
-                              -kappa_[2]*1/3*sqrt2*cx2*(2+2*(cx+3*cy))*sy2)*I;
+                              -kappa_[2]*1/3*sqrt2*cx2*(2+2*(cx+3*cy))*sy2)*cI;
    
     MEL(ndof_, V, 1, 0) +=    -k_[2]*(-2-2*(cx+cy))*sx2*sy2	
                               -kappa_[2]*(2+2*(cx+cy))*sx2*sy2;
     MEL(ndof_, V, 2, 0) +=z_*(-k_[2]*1/3*sqrt2*cy2*(-2-2*(3*cx+cy))*sx2
-                              -kappa_[2]*1/3*sqrt2*cy2*(2+2*(3*cx+cy))*sx2)*I;
+                              -kappa_[2]*1/3*sqrt2*cy2*(2+2*(3*cx+cy))*sx2)*cI;
     MEL(ndof_, V, 2, 1) +=z_*(-k_[2]*1/3*sqrt2*cx2*(-2-2*(cx+3*cy))*sy2
-                              -kappa_[2]*1/3*sqrt2*cx2*(2+2*(cx+3*cy))*sy2)*I;
+                              -kappa_[2]*1/3*sqrt2*cx2*(2+2*(cx+3*cy))*sy2)*cI;
 
     // (Eqn A29, A30)
     MEL(ndof_, W, 0, 0) = -kappa_[1] 
@@ -438,12 +438,12 @@ void FCC100StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
                          - k_[2]*4/3*(cx+cy) -kappa_[2]*2/3*(cx + cy);
     // off-diagonal of W
     MEL(ndof_, W, 0, 1) = 0;
-    MEL(ndof_, W, 0, 2) = z_*(k_[2]*2/3*sqrt2*sx - kappa_[2]*2/3*sqrt2*sx)*I;
-    MEL(ndof_, W, 1, 2) = z_*(k_[2]*2/3*sqrt2*sy - kappa_[2]*2/3*sqrt2*sy)*I;
+    MEL(ndof_, W, 0, 2) = z_*(k_[2]*2/3*sqrt2*sx - kappa_[2]*2/3*sqrt2*sx)*cI;
+    MEL(ndof_, W, 1, 2) = z_*(k_[2]*2/3*sqrt2*sy - kappa_[2]*2/3*sqrt2*sy)*cI;
 
     MEL(ndof_, W, 1, 0) = 0;
-    MEL(ndof_, W, 2, 0) = z_*(k_[2]*2/3*sqrt2*sx - kappa_[2]*2/3*sqrt2*sx)*I;
-    MEL(ndof_, W, 2, 1) = z_*(k_[2]*2/3*sqrt2*sy - kappa_[2]*2/3*sqrt2*sy)*I;
+    MEL(ndof_, W, 2, 0) = z_*(k_[2]*2/3*sqrt2*sx - kappa_[2]*2/3*sqrt2*sx)*cI;
+    MEL(ndof_, W, 2, 1) = z_*(k_[2]*2/3*sqrt2*sy - kappa_[2]*2/3*sqrt2*sy)*cI;
 #endif
   }
     
@@ -597,16 +597,16 @@ FCC100x2StiffnessKernel::get_per_layer_dynamical_matrices(double qx,
   Vxx[2][2]  = -k_[0]*cy2;
 
   /* off-diagonal of Vxx */
-  Vxx[1][2]  =  k_[0]*sy2*I;
-  Vxx[2][1]  =  k_[0]*sy2*I;
+  Vxx[1][2]  =  k_[0]*sy2*cI;
+  Vxx[2][1]  =  k_[0]*sy2*cI;
 
   /* diagonal of Vxy */
   Vxy[0][0]  = -k_[0]*cx2;
   Vxy[2][2]  = -k_[0]*cx2;
 
   /* off-diagonal of Vxy */
-  Vxy[0][2]  =  k_[0]*sx2*I;
-  Vxy[2][0]  =  k_[0]*sx2*I;
+  Vxy[0][2]  =  k_[0]*sx2*cI;
+  Vxy[2][0]  =  k_[0]*sx2*cI;
 
   /*
    * Assemble into kernel matrices

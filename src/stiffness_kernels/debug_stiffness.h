@@ -35,8 +35,6 @@ StiffnessKernelStyle(chain,ChainStiffnessKernel)
 #include "memory.h"
 #include "surface_stiffness.h"
 
-using namespace std;
-
 namespace LAMMPS_NS {
 
 class DebugStiffnessKernel : public StiffnessKernel {

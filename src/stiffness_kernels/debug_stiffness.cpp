@@ -42,8 +42,8 @@ namespace LAMMPS_NS {
  * --------------------------------------------------------------------*/
 
 DebugStiffnessKernel::DebugStiffnessKernel(int narg, int *carg, char **arg,
-					   Domain *domain, Memory *memory,
-					   Error *error)
+                                           Domain *domain, Memory *memory,
+                                           Error *error)
   : StiffnessKernel(narg, carg, arg, domain, memory, error)
 {
   char *endptr;
@@ -52,13 +52,13 @@ DebugStiffnessKernel::DebugStiffnessKernel(int narg, int *carg, char **arg,
 
   if (*carg >= narg) {
     error_->all(FLERR,"DebugStiffnessKernel::DebugStiffnessKernel: Expected "
-		"kernel dimension.");
+                "kernel dimension.");
   }
 
   nu_ = strtol(arg[*carg], &endptr, 10);
   if (endptr == arg[*carg]) {
     error_->all(FLERR,"DebugStiffnessKernel::DebugStiffnessKernel: Error "
-		"converting dimension argument to integer.");
+                "converting dimension argument to integer.");
   }
   (*carg)++;
 
@@ -79,8 +79,8 @@ void DebugStiffnessKernel::get_per_layer_dynamical_matrices(double qx,
   for (int i = 0; i < 2*nu_+1; i++) {
     for (int k = 0; k < ndof_; k++) {
       for (int l = 0; l < ndof_; l++) {
-	MEL(ndof_, D[i], k, l) =
-	  (i*1000.+k*10.+l*1.) + (i*10000.+k*10.+l*1.)*I;
+        MEL(ndof_, D[i], k, l) =
+          (i*1000.+k*10.+l*1.) + (i*10000.+k*10.+l*1.)*cI;
       }
     }
   }
@@ -127,8 +127,8 @@ ChainStiffnessKernel::ChainStiffnessKernel(int narg, int *carg, char **arg,
       (*carg)++;
       height_ = strtol(arg[*carg], &endptr, 10);
       if (endptr == arg[*carg]) {
-	error_->all(FLERR,"ChainStiffnessKernel::ChainStiffnessKernel: Error "
-		    "converting height argument to number.");
+        error_->all(FLERR,"ChainStiffnessKernel::ChainStiffnessKernel: Error "
+                    "converting height argument to number.");
       }
       (*carg)++;
     }
@@ -147,7 +147,7 @@ void ChainStiffnessKernel::get_per_layer_dynamical_matrices(double qx,
 {
   if (nu_ != 1) {
     error_->all(FLERR,"ChainStiffnessKernel::get_per_layer_dynamical_matrices:"
-		"Only works for nu == 1.");
+                "Only works for nu == 1.");
   }
 
   SquareMatrix<double_complex> U0(dim_, D[0]), U(dim_, D[1]), V(dim_, D[2]);

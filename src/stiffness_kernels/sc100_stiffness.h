@@ -35,8 +35,6 @@ StiffnessKernelStyle(sc100,SC100StiffnessKernel)
 #include "memory.h"
 #include "surface_stiffness.h"
 
-using namespace std;
-
 namespace LAMMPS_NS {
 
 class SC100ExplicitStiffnessKernel : public StiffnessKernel {

@@ -35,8 +35,6 @@ StiffnessKernelStyle(isotropic/z,IsotropicStiffnessKernel)
 #include "memory.h"
 #include "surface_stiffness.h"
 
-using namespace std;
-
 namespace LAMMPS_NS {
 
 class IsotropicStiffnessKernel : public StiffnessKernel {

@@ -57,13 +57,14 @@ FixAddForceDynamic::FixAddForceDynamic(LAMMPS *lmp, int narg, char **arg) :
   Fix(lmp, narg, arg)
 {
   if (narg < 9) error->all(FLERR,"Not enough arguments for fix "
-			    "addforce/dynamic command");
+                            "addforce/dynamic command");
 
   if (!atom->gfmd_flag) {
     error->all(FLERR,"fix addforce/dynamic requires atom attributes gid and "
-	       "xeq; use gfmd atom style.");
+               "xeq; use gfmd atom style.");
   }
 
+  energy_global_flag = 1;
   vector_flag = 1;
   size_vector = 12;
   global_freq = 1;
@@ -98,7 +99,6 @@ int FixAddForceDynamic::setmask()
 {
   int mask = 0;
   mask |= POST_FORCE;
-  mask |= THERMO_ENERGY;
   mask |= MIN_POST_FORCE;
   return mask;
 }
@@ -139,10 +139,10 @@ void FixAddForceDynamic::post_force(int vflag)
       double s = sin(2*M_PI*(xeq[i][0]*nx_/xprd+xeq[i][1]*ny_/yprd-freq_*t));
 
       for (int k = 0; k < 3; k++) {
-	xfc[k] += c*x[i][k];
-	xfs[k] += s*x[i][k];
-	vfc[k] += c*v[i][k];
-	vfs[k] += s*v[i][k];
+        xfc[k] += c*x[i][k];
+        xfs[k] += s*x[i][k];
+        vfc[k] += c*v[i][k];
+        vfs[k] += s*v[i][k];
       }
 
       f[i][0] += c*xvalue_;
@@ -182,7 +182,7 @@ double FixAddForceDynamic::compute_vector(int n)
     MPI_Allreduce(vec_, reduced_vec_, 12, MPI_DOUBLE, MPI_SUM, world);
     if (nsteps_ > 0) {
       for (int k = 0; k < 12; k++)
-	reduced_vec_[k] /= nsteps_;
+        reduced_vec_[k] /= nsteps_;
     }
     vec_is_reduced_ = 1;
   }

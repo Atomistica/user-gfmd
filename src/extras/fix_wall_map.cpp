@@ -293,6 +293,7 @@ FixWallMap::FixWallMap(LAMMPS *lmp, int narg, char **arg) :
 
   // fix behavior
 
+  energy_global_flag = 1;
   scalar_flag = 1;
   vector_flag = 1;
   size_vector = 6;
@@ -647,7 +648,6 @@ int FixWallMap::setmask()
 {
   int mask = 0;
   mask |= PRE_FORCE;
-  mask |= THERMO_ENERGY;
   mask |= MIN_PRE_FORCE;
   mask |= END_OF_STEP;
   nevery = 1;

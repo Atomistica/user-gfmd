@@ -193,7 +193,11 @@ void CrystalSurface::compute_neighbor_list(double rcut)
                             r = ri;
                             r -= &positions_[3*j];
 
-                            double d[3] = { x, y, z };
+                            double d[3] = {
+                                static_cast<double>(x),
+                                static_cast<double>(y),
+                                static_cast<double>(z)
+                            };
                             r -= cell.dot(d);
 
                             double rnorm = r.nrm2();

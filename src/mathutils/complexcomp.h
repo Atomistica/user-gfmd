@@ -139,7 +139,7 @@ typedef std::complex<double> double_complex;
 #define cnorm(x)  std::norm(x)
 #define cexp(x)   std::exp(x)
 
-#define I double_complex(0.0, 1.0);
+#define cI double_complex(0.0, 1.0);
 
 #define COMPLEX_NUMBER(a, b)  double_complex(a, b)
 
