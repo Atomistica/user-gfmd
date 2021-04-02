@@ -79,6 +79,6 @@ if res > 1e-2:
 ###
 
 if len(sys.argv) == 2 and sys.argv[1] == '--dump':
-    print 'Residual: ', res
-    print 'Dumping f.out...'
+    print('Residual: ', res)
+    print('Dumping f.out...')
     np.savetxt('f.out', np.transpose([r_xy.reshape(-1), f_xy.reshape(-1), fa_xy.reshape(-1)]))

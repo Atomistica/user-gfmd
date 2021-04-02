@@ -76,8 +76,8 @@ fa_xy = np.where(r_xy<a, p0*np.sqrt(1-(r_xy/a)**2), np.zeros_like(r_xy))
 res = np.sum( (f_xy - fa_xy)**2 )
 
 if len(sys.argv) == 2 and sys.argv[1] == '--dump':
-    print 'Residual: ', res
-    print 'Dumping f.out...'
+    print('Residual: ', res)
+    print('Dumping f.out...')
     np.savetxt('f.out', np.transpose([r_xy.reshape(-1), f_xy.reshape(-1), fa_xy.reshape(-1)]))
 
 if res > 1e-2:

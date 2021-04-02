@@ -94,8 +94,8 @@ res = np.sum( (p_xy - pa_xy)**2 )
 ###
 
 if len(sys.argv) == 2 and sys.argv[1] == '--dump':
-     print 'Residual: ', res
-     print 'Dumping p.out...'
+     print('Residual: ', res)
+     print('Dumping p.out...')
      np.savetxt('p.out', np.transpose([r_xy.reshape(-1), p_xy.reshape(-1), pa_xy.reshape(-1)]))
 
 # Residual is high. Not sure if something is wrong with FCC 111. Residual on

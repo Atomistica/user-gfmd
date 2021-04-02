@@ -45,17 +45,17 @@ def diffmag(fx1,fy1,fz1,fx2,fy2,fz2):
 #dstep = (1e-6, 1e-4, 1e-2, 1e-0)
 #folders = ('dstep0.000001/','dstep0.0001/','dstep0.01/','dstep1.0/')
 folders = glob.glob('dstep*')
-dstep = map(lambda x: float(x[5:]), folders)
-print folders, dstep
+dstep = [float(x[5:]) for x in folders]
+print(folders, dstep)
 err=numpy.zeros((len(dstep),))
 absmag=numpy.zeros((len(dstep),))
 
-print "Now we will print the contents of the probe dump files, with each"
-print "probe atom identified in the GF run with the corresponding one in the full run"
+print("Now we will print the contents of the probe dump files, with each")
+print("probe atom identified in the GF run with the corresponding one in the full run")
   
 for i in numpy.arange(len(dstep)):
 
-  print folders[i]
+  print(folders[i])
   
   # read in the two files to compare
   pos_and_forces_gf   = numpy.loadtxt(folders[i]+'/dumpprobegf', skiprows=9)
@@ -76,7 +76,7 @@ for i in numpy.arange(len(dstep)):
   fz2=pos_and_forces_full[:,5]
   
   if len(x1) != len(x2):
-    print "File data not even the same length.  (Diff num probe atoms?)"
+    print("File data not even the same length.  (Diff num probe atoms?)")
   
   # Approx distance scale between atoms for error checking
   nn_scale = 1.0 
@@ -99,7 +99,7 @@ for i in numpy.arange(len(dstep)):
     # Print error message if atoms in the two files aren't even close together
     if min_distsq_of_atoms_to_atomjj > (nn_scale/4.)**(2.):
       if no_err:
-        print "Warning: atoms not even close to co-located; ID-ing may break down.  Posible due to PBCs."
+        print("Warning: atoms not even close to co-located; ID-ing may break down.  Posible due to PBCs.")
       no_err = 1
       recallbadindices[jj] = 1 # Atom1[jj] has nothing near it and should never be used
     
@@ -107,7 +107,7 @@ for i in numpy.arange(len(dstep)):
     else:
       here = numpy.nonzero(distsq_of_atoms_to_atomjj == min(distsq_of_atoms_to_atomjj))[0]
       if len(here) > 1:
-        print "Error: Possibly multiple atoms in file2 equally near atom jj in file 1"
+        print("Error: Possibly multiple atoms in file2 equally near atom jj in file 1")
         exit
       sortorder[jj]=here
   
@@ -126,41 +126,41 @@ for i in numpy.arange(len(dstep)):
       absmag[i] += diffmag(fx1[jj],fy1[jj],fz1[jj],0,0,0)
   
   # Print for visual check; useful if need to debug this script
-  print "        ", "     x", "   y", "  z","  fx","  fy","  fz"
+  print("        ", "     x", "   y", "  z","  fx","  fy","  fz")
   for jj in numpy.arange(len(x1)):
     if not (recallbadindices[jj]):
       if (diffmag(x1[jj],y1[jj],z1[jj],x2[jj],y2[jj],z2[jj]) > (nn_scale/4.)):
-        print "Fatal error: The comparison is invalid but was not flagged!!"
-      print "full", x1[jj], y1[jj], z1[jj], fx1[jj], fy1[jj], fz1[jj]
-      print "gf  ", x2[jj], y2[jj], z2[jj], fx2[jj], fy2[jj], fz2[jj]
+        print("Fatal error: The comparison is invalid but was not flagged!!")
+      print("full", x1[jj], y1[jj], z1[jj], fx1[jj], fy1[jj], fz1[jj])
+      print("gf  ", x2[jj], y2[jj], z2[jj], fx2[jj], fy2[jj], fz2[jj])
   
-  print err[i], "/", absmag[i]
+  print(err[i], "/", absmag[i])
     
 relerr = err/absmag
-print "relative error", relerr
+print("relative error", relerr)
 
 numpy.savetxt('err.out', numpy.transpose([dstep, err, relerr]))
 
 testpass=1
 if (relerr[2] > 0.1):
-  print "Greater than 10% error found when displacing probes 1e-2"
+  print("Greater than 10% error found when displacing probes 1e-2")
   testpass=0
 if (relerr[1] > 0.1):
-  print "Greater than 10% error found when displacing probes 1e-4"
+  print("Greater than 10% error found when displacing probes 1e-4")
   testpass=0
 
 if ((err[2] / err[3]) > (3e-4)):
-  print "dstep shrunk by 2 O.o.M.  Force error should shrink by 4 O.o.M. "
-  print "...But shrunk only by ", err[2]/err[3]
+  print("dstep shrunk by 2 O.o.M.  Force error should shrink by 4 O.o.M. ")
+  print("...But shrunk only by ", err[2]/err[3])
   testpass=0
 if ((err[1] / err[2]) > (3e-4)):
-  print "dstep shrunk by 2 O.o.M.  Force error should shrink by 4 O.o.M. "
-  print "...But shrunk only by ", err[1]/err[2]
+  print("dstep shrunk by 2 O.o.M.  Force error should shrink by 4 O.o.M. ")
+  print("...But shrunk only by ", err[1]/err[2])
   testpass=0
 
 if testpass:
-  print "Seems to testpass!  Check criterion v00"
-  print "return 1"
+  print("Seems to testpass!  Check criterion v00")
+  print("return 1")
  
  
   

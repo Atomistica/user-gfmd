@@ -82,8 +82,8 @@ pa_xy = np.where(r_xy<a, p0*np.sqrt(1-(r_xy/a)**2), np.zeros_like(r_xy))
 res = np.sum( (p_xy - pa_xy)**2 )
 
 if len(sys.argv) == 2 and sys.argv[1] == '--dump':
-    print 'Residual: ', res
-    print 'Dumping p.out...'
+    print('Residual: ', res)
+    print('Dumping p.out...')
     np.savetxt('p.out', np.transpose([r_xy.reshape(-1), p_xy.reshape(-1), pa_xy.reshape(-1)]))
 
 if res > 1e-2:
