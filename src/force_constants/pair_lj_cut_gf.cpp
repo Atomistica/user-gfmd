@@ -52,7 +52,6 @@
 #include "math_const.h"
 #include "memory.h"
 #include "error.h"
-#include "gfmd_grid.h"
 
 using namespace LAMMPS_NS;
 using namespace MathConst;
@@ -98,13 +97,13 @@ void PairLJCutGF::compute(int eflag, int vflag)
 
   double **x = atom->x;
   double **f = atom->f;
-  bigint *gid = atom->gid;
+  int *gflag = atom->gflag;
   int *type = atom->type;
   int nlocal = atom->nlocal;
   double *special_lj = force->special_lj;
   int newton_pair = force->newton_pair;
 
-  if (!atom->gfmd_flag) gid = nullptr;
+  if (!atom->gfmd_flag) gflag = nullptr;
 
   inum = list->inum;
   ilist = list->ilist;
@@ -129,7 +128,7 @@ void PairLJCutGF::compute(int eflag, int vflag)
       j &= NEIGHMASK;
 
       // if mask is present in both, do not compute those
-      if (gid && FLAG_FROM_POW2_IDX(gid[i]) && FLAG_FROM_POW2_IDX(gid[j])) continue;
+      if (gflag && gflag[i] && gflag[j]) continue;
 
       delx = xtmp - x[j][0];
       dely = ytmp - x[j][1];

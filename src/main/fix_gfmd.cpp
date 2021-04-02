@@ -93,6 +93,9 @@
      Made computation of force-constants and stiffness matrix more general.
      Added support for arbitrary lattices and finite differences computation
      of force-constant matrices.
+
+     Apr 2021
+     Maintenance update for compatibility with latest LAMMPS master.
 ------------------------------------------------------------------------- */
 
 #include <algorithm>
@@ -119,7 +122,6 @@
 #include "pair.h"
 #include "update.h"
 
-#include "gfmd_grid.h"
 #include "gfmd_solver.h"
 #include "surface_stiffness.h"
 
@@ -135,6 +137,8 @@ using namespace FixConst;
 #define round(x)  (int)(x < 0 ? (x - 0.5) : (x + 0.5))
 #define lround(x)  (int)(x < 0 ? (x - 0.5) : (x + 0.5))
 
+#define LOC_IDX(ix, iy, iu)  ( ( (ix)*(ny_loc) + (iy) )*(nu) + (iu) )
+
 /* ---------------------------------------------------------------------- */
 
 FixGFMD::FixGFMD(LAMMPS *lmp, int narg, char **arg)
@@ -146,9 +150,9 @@ FixGFMD::FixGFMD(LAMMPS *lmp, int narg, char **arg)
     feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
 
-  int *mask   = atom->mask;
-  bigint *gid = atom->gid;
-  int nlocal  = atom->nlocal;
+  int *mask = atom->mask;
+  int **gid = atom->gid;
+  int nlocal = atom->nlocal;
 
   int iarg;
   char errstr[120];
@@ -354,11 +358,9 @@ FixGFMD::FixGFMD(LAMMPS *lmp, int narg, char **arg)
     rnu = 0;
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & groupbit) {
-        bigint j = gid[i];
-
-        int ix = IX_FROM_POW2_IDX(j);
-        int iy = IY_FROM_POW2_IDX(j);
-        int iu = IU_FROM_POW2_IDX(j);
+        int ix = gid[i][0];
+        int iy = gid[i][1];
+        int iu = gid[i][2];
 
         nx_loc = std::max(nx_loc, ix);
         ny_loc = std::max(ny_loc, iy);
@@ -509,9 +511,9 @@ int FixGFMD::setmask()
 
 void FixGFMD::init()
 {
-  int *mask   = atom->mask;
-  bigint *gid = atom->gid;
-  int nlocal  = atom->nlocal;
+  int *mask = atom->mask;
+  int **gid = atom->gid;
+  int nlocal = atom->nlocal;
 
   // check for another GFMD fix and warn
   int count = 0;
@@ -576,11 +578,9 @@ void FixGFMD::init()
    */
   for (int i = 0; i < nlocal; i++) {
     if (mask[i] & groupbit) {
-      bigint j = gid[i];
-
-      int ix = IX_FROM_POW2_IDX(j);
-      int iy = IY_FROM_POW2_IDX(j);
-      int iu = IU_FROM_POW2_IDX(j);
+      int ix = gid[i][0];
+      int iy = gid[i][1];
+      int iu = gid[i][2];
 
       if (ix < 0 || ix >= nx) {
           char errstr[1024];
@@ -656,21 +656,22 @@ void FixGFMD::min_setup(int vflag)
 // Update xshift to be the just-calculated cur_xshift
 void FixGFMD::pre_force(int vflag)
 {
-  double **x       = atom->x;
-  double **xeq     = atom->xeq;
-  double **v       = atom->v;
+  double **x = atom->x;
+  double **xeq = atom->xeq;
+  double **v = atom->v;
 
-  double xprd      = domain->xprd;
-  double yprd      = domain->yprd;
+  double xprd = domain->xprd;
+  double yprd = domain->yprd;
   double xprd_half = domain->xprd_half;
   double yprd_half = domain->yprd_half;
-  double *h        = domain->h;
+  double *h = domain->h;
 
-  int *mask        = atom->mask;
-  int *image       = atom->image;
-  bigint *gid      = atom->gid;
-  int nlocal       = atom->nlocal;
-  int nall         = nlocal + atom->nghost;
+  int *mask = atom->mask;
+  int *image = atom->image;
+  int **gid = atom->gid;
+  int *gflag = atom->gflag;
+  int nlocal = atom->nlocal;
+  int nall = nlocal + atom->nghost;
 
   int natoms_cur;
 
@@ -730,12 +731,10 @@ void FixGFMD::pre_force(int vflag)
   if (domain->triclinic == 0) {  // for orthogonal lattice
     for (int i = 0; i < nall; i++) {
       if (mask[i] & groupbit) {
-        bigint j = gid[i];
-
-        int ix = IX_FROM_POW2_IDX(j) - dxshift;
-        int iy = IY_FROM_POW2_IDX(j) - dyshift;
-        int iu = IU_FROM_POW2_IDX(j);
-        int flag = FLAG_FROM_POW2_IDX(j);
+        int ix = gid[i][0] - dxshift;
+        int iy = gid[i][1] - dyshift;
+        int iu = gid[i][2];
+        int flag = gflag[i];
 
         if (dxshift != 0 || dyshift != 0) {
           // wrap to box if ix or iy has shifted
@@ -745,7 +744,10 @@ void FixGFMD::pre_force(int vflag)
           while (iy < 0)    iy += ny;
 
           // store wrapped grid id for unpacking/communication
-          gid[i] = POW2_IDX(ix, iy, iu, flag);
+          gid[i][0] = ix;
+          gid[i][1] = iy;
+          gid[i][2] = iu;
+          gflag[i] = flag;
         }
 
         ix -= xlo_loc;
@@ -803,10 +805,8 @@ void FixGFMD::pre_force(int vflag)
 
     for (int i = 0; i < nall; i++) {
       if (mask[i] & groupbit) {
-        bigint j = gid[i];
-
-        int ix = IX_FROM_POW2_IDX(j) - xlo_loc;
-        int iy = IY_FROM_POW2_IDX(j) - ylo_loc;
+        int ix = gid[i][0] - xlo_loc;
+        int iy = gid[i][1] - ylo_loc;
 
         // wrap to box
         while (ix > nx)  ix -= nx;
@@ -816,7 +816,7 @@ void FixGFMD::pre_force(int vflag)
 
         if (ix >= 0 && ix < nx_loc && iy >= 0 && iy < ny_loc) {
 
-          int iu = IU_FROM_POW2_IDX(j);
+          int iu = gid[i][2];
 
           // y is the fast index
           int iloc = ix*ny_loc + iy;
@@ -949,10 +949,10 @@ void FixGFMD::post_force(int vflag)
 
 void FixGFMD::grid_to_list()
 {
-  bigint *gid = atom->gid;
-  int *mask   = atom->mask;
-  int nlocal  = atom->nlocal;
-  int nall    = nlocal + atom->nghost;
+  int **gid = atom->gid;
+  int *mask = atom->mask;
+  int nlocal = atom->nlocal;
+  int nall = nlocal + atom->nghost;
 
   /*
    * add elastic force to local atoms
@@ -964,10 +964,8 @@ void FixGFMD::grid_to_list()
 
   for (int i = 0; i < nall; i++) { 
     if (mask[i] & groupbit) {
-      bigint j = gid[i];
-
-      int ix = IX_FROM_POW2_IDX(j);
-      int iy = IY_FROM_POW2_IDX(j);
+      int ix = gid[i][0];
+      int iy = gid[i][1];
 
       // has this atom been computed locally?
       if (ix >= xlo_loc && ix <= xhi_loc && iy >= ylo_loc && iy <= yhi_loc) {
@@ -975,7 +973,7 @@ void FixGFMD::grid_to_list()
           ix -= xlo_loc;
           iy -= ylo_loc;
 
-        int iu = IU_FROM_POW2_IDX(j);
+        int iu = gid[i][2];
 
         // y is the fast index
         int iloc = ix*ny_loc + iy;
@@ -1044,11 +1042,9 @@ void FixGFMD::grid_to_list()
       if (!force_is_known[i]) {
         char newstr[1024];
 
-        bigint j = gid[i];
-
-        int ix = IX_FROM_POW2_IDX(j);
-        int iy = IY_FROM_POW2_IDX(j);
-        int iu = IU_FROM_POW2_IDX(j);
+        int ix = gid[i][0];
+        int iy = gid[i][1];
+        int iu = gid[i][2];
 
         sprintf(newstr, "%i (%i %i %i - %f %f %f),\n ", tag[i],
                 ix, iy, iu, x[i][0]-xeq[i][0], x[i][1]-xeq[i][1],
@@ -1152,7 +1148,7 @@ int FixGFMD::pack_reverse_comm(int n, int first, double *buf)
 // LAMMPS will give us a list of atom local-indices n long, and their forces in buf
 void FixGFMD::unpack_reverse_comm(int n, int *list, double *buf)
 {
-  bigint *gid = atom->gid;
+  int **gid = atom->gid;
   int nlocal = atom->nlocal;
 
   int m = 0;
@@ -1161,15 +1157,14 @@ void FixGFMD::unpack_reverse_comm(int n, int *list, double *buf)
   if (n > 0) {
     while (i < n) {
       int j = list[i];
-      bigint k = gid[j];
-      int ix = IX_FROM_POW2_IDX(k);
-      int iy = IY_FROM_POW2_IDX(k);
+      int ix = gid[j][0];
+      int iy = gid[j][1];
 
       // Only accept this gfmd force for atom i if it wasn't already calculated here.
       // pack_reverse_comm only sends atoms that were gfmd_local on the neighboring proc.
       // However, if data is sent to self, then may receive atom that was calculated here.
       if (ix < xlo_loc || ix > xhi_loc || iy < ylo_loc || iy > yhi_loc) {
-        int iu = IU_FROM_POW2_IDX(k);
+        int iu = gid[j][2];
 
         // #ifdef GFMD_DEBUG
         if (force_is_known[j]) {
@@ -1266,17 +1261,23 @@ void FixGFMD::comp_xeq()
 void FixGFMD::comp_map()
 {
   double **xeq = atom->xeq;
-  int *type    = atom->type;
-  int *mask    = atom->mask;
-  bigint *gid  = atom->gid;
-  int nlocal   = atom->nlocal;
+  int *type = atom->type;
+  int *mask = atom->mask;
+  int **gid = atom->gid;
+  int *gflag = atom->gflag;
+  int nlocal = atom->nlocal;
 
   int my_nu;
 
   /* --- */
   
   // reset to zero
-  std::fill(gid, gid+nlocal, 0);
+  for (int i = 0; i < nlocal; ++i) {
+    gid[i][0] = 0;
+    gid[i][1] = 0;
+    gid[i][2] = 0;
+    gflag[i] = 0;
+  }
 
   // invcell is currently in 1/nn-units but should be in 1/distance units!
   // Working assumption: invcell is (100 010 001) (surface_stiffness.cpp)
@@ -1352,7 +1353,10 @@ void FixGFMD::comp_map()
       ix = (ix < 0)? (ix+nx):ix;
       iy = (iy < 0)? (iy+ny):iy;
 
-      gid[i] = POW2_IDX(ix, iy, 0, 0);
+      gid[i][0] = ix;
+      gid[i][1] = iy;
+      gid[i][2] = 0;
+      gflag[i] = 0;
 
       j++;
     }
@@ -1399,10 +1403,8 @@ void FixGFMD::comp_map()
     // We first identify the central cell.
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & groupbit) {
-        bigint j = gid[i];
-              
-        int ix = IX_FROM_POW2_IDX(j);
-        int iy = IY_FROM_POW2_IDX(j);
+        int ix = gid[i][0];
+        int iy = gid[i][1];
 
         if (ix == refx && iy == refy) {
           // Sanity check.
@@ -1423,10 +1425,8 @@ void FixGFMD::comp_map()
     // Next, we identify the 8 neighboring cells.
     for (int i = 0; i < nlocal; i++) {
       if (mask[i] & groupbit) {
-        bigint j = gid[i];
-              
-        int ix = IX_FROM_POW2_IDX(j);
-        int iy = IY_FROM_POW2_IDX(j);
+        int ix = gid[i][0];
+        int iy = gid[i][1];
 
         if (std::abs(ix-refx) <= 1 && std::abs(iy-refy) <= 1 &&
             !(ix == refx && iy == refy)) {
@@ -1540,8 +1540,10 @@ void FixGFMD::comp_map()
             flag = iu >= nu/2 ? 1 : 0;
         }
         flags[iu] = flag;
-        gid[i] = POW2_IDX(ix, iy, iu, flag);
-
+        gid[i][0] = ix;
+        gid[i][1] = iy;
+        gid[i][2] = iu;
+        gflag[i] = flag;
       }
     }
 
@@ -1555,12 +1557,10 @@ void FixGFMD::comp_map()
 #if 0
   for (int i = 0; i < nlocal; i++) {
       if (mask[i] & groupbit) {
-          bigint j = gid[i];
-              
-          int ix = IX_FROM_POW2_IDX(j);
-          int iy = IY_FROM_POW2_IDX(j);
-          int iu = IU_FROM_POW2_IDX(j);
-          int flag = FLAG_FROM_POW2_IDX(j);
+          int ix = gid[i][0];
+          int iy = gid[i][1];
+          int iu = gid[i][2];
+          int flag = gflag[i];
 
           std::cout << vec<double>(3, xeq[i]) << ", " << ix << ", " << iy << ", " << iu << ", " << flag << std::endl;
       }
@@ -1599,16 +1599,17 @@ void FixGFMD::comp_map()
 void FixGFMD::check_grid_indices()
 {
   double **xeq = atom->xeq;
-  int *mask    = atom->mask;
-  int *tag     = atom->tag;
-  bigint *gid  = atom->gid;
-  int nall     = atom->nlocal + atom->nghost;
+  int *mask = atom->mask;
+  int *tag = atom->tag;
+  int **gid = atom->gid;
+  int *gflag = atom->gflag;
+  int nall = atom->nlocal + atom->nghost;
 
-  double xprd  = domain->xprd;
-  double yprd  = domain->yprd;
+  double xprd = domain->xprd;
+  double yprd = domain->yprd;
 
-  int nx2      = nx/2;
-  int ny2      = ny/2;
+  int nx2 = nx/2;
+  int ny2 = ny/2;
   int xshift_of_ref_atom;
   int yshift_of_ref_atom;
 
@@ -1637,7 +1638,7 @@ void FixGFMD::check_grid_indices()
      * look for first atom in layer rnu-1 (typically minimum-z layer) on proc 0
      */
     int i = 0;
-    while (!(mask[i] & groupbit && IU_FROM_POW2_IDX(gid[i]) == rnu-1) &&
+    while (!(mask[i] & groupbit && gid[i][2] == rnu-1) &&
            i < nall)  i++;
     if (i >= nall) {
       char errstr[256];
@@ -1666,8 +1667,8 @@ void FixGFMD::check_grid_indices()
     /*
      * Get (post any shift) grid information of atom i
      */
-    int ix0 = IX_FROM_POW2_IDX(gid[i]);
-    int iy0 = IY_FROM_POW2_IDX(gid[i]);
+    int ix0 = gid[i][0];
+    int iy0 = gid[i][1];
 
     if (gfmdlog) {
       fprintf(gfmdlog, "Reference zero for layer %d is %f, %f.\n", rnu-1,
@@ -1680,9 +1681,9 @@ void FixGFMD::check_grid_indices()
        */
       int i = 0;
       while (!(mask[i] & groupbit &&
-               IX_FROM_POW2_IDX(gid[i]) == ix0 &&
-               IY_FROM_POW2_IDX(gid[i]) == iy0 &&
-               IU_FROM_POW2_IDX(gid[i]) == iu) &&
+               gid[i][0] == ix0 &&
+               gid[i][1] == iy0 &&
+               gid[i][2] == iu) &&
              i < nall)  i++;
       if (i >= nall) {
         char errstr[1024];
@@ -1765,10 +1766,10 @@ void FixGFMD::check_grid_indices()
 
   for (int i = 0; i < nall; i++) {
     if (mask[i] & groupbit) {
-      int ix = IX_FROM_POW2_IDX(gid[i]); 
-      int iy = IY_FROM_POW2_IDX(gid[i]);
-      int iu = IU_FROM_POW2_IDX(gid[i]);
-      int flag = FLAG_FROM_POW2_IDX(gid[i]);
+      int ix = gid[i][0]; 
+      int iy = gid[i][1];
+      int iu = gid[i][2];
+      int flag = gflag[i];
 
       /*
        * Compute difference between stored grid index (ix) and what we'd expect from
@@ -1815,7 +1816,10 @@ void FixGFMD::check_grid_indices()
         while (iy < 0)    iy += ny;
       
         // store wrapped grid id
-        gid[i] = POW2_IDX(ix, iy, iu, flag);
+        gid[i][0] = ix;
+        gid[i][1] = iy;
+        gid[i][2] = iu;
+        gflag[i] = flag;
         // xshift updated below, out of the loop
       }
 

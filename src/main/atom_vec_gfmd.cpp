@@ -30,17 +30,17 @@ AtomVecGFMD::AtomVecGFMD(LAMMPS *lmp) : AtomVec(lmp)
   // order of fields in a string does not matter
   // except: fields_data_atom & fields_data_vel must match data file
 
-  fields_grow = (char *) "xeq gid";
-  fields_copy = (char *) "xeq gid";
+  fields_grow = (char *) "xeq gid gflag";
+  fields_copy = (char *) "xeq gid gflag";
   fields_comm = (char *) "";
   fields_comm_vel = (char *) "";
   fields_reverse = (char *) "";
-  fields_border = (char *) "xeq gid";
-  fields_border_vel = (char *) "xeq gid";
-  fields_exchange = (char *) "xeq gid";
-  fields_restart = (char *) "xeq gid";
-  fields_create = (char *) "xeq gid";
-  fields_data_atom = (char *) "id type x xeq";
+  fields_border = (char *) "xeq gid gflag";
+  fields_border_vel = (char *) "xeq gid gflag";
+  fields_exchange = (char *) "xeq gid gflag";
+  fields_restart = (char *) "xeq gid gflag";
+  fields_create = (char *) "xeq gid gflag";
+  fields_data_atom = (char *) "id type x gid xeq";
   fields_data_vel = (char *) "id v";
 
   setup_fields();

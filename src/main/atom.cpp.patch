@@ -1,32 +1,34 @@
 diff --git a/src/atom.cpp b/src/atom.cpp
-index 9a2bc75f0..91c786fe2 100644
+index ecb82993c..8722637dc 100644
 --- a/src/atom.cpp
 +++ b/src/atom.cpp
-@@ -193,6 +193,11 @@ Atom::Atom(LAMMPS *lmp) : Pointers(lmp)
+@@ -197,6 +197,12 @@ Atom::Atom(LAMMPS *lmp) : Pointers(lmp)
    rho = drho = esph = desph = cv = nullptr;
    vest = nullptr;
  
 +  // USER-GFMD package
 +
 +  gid = nullptr;
++  gflag = nullptr;
 +  xeq = nullptr;
 +
    // end of customization section
    // --------------------------------------------------------------------
  
-@@ -508,6 +513,11 @@ void Atom::peratom_create()
+@@ -509,6 +515,12 @@ void Atom::peratom_create()
    add_peratom("eff_plastic_strain_rate",&eff_plastic_strain_rate,DOUBLE,0);
    add_peratom("damage",&damage,DOUBLE,0);
  
 +  // USER-GFMD package
 +
-+  add_peratom("gid",&gid,BIGINT,0);
++  add_peratom("gid",&gid,INT,3);
++  add_peratom("gflag",&gflag,INT,0);
 +  add_peratom("xeq",&xeq,DOUBLE,3);
 +
    // end of customization section
    // --------------------------------------------------------------------
  }
-@@ -618,6 +628,7 @@ void Atom::set_atomflag_defaults()
+@@ -615,6 +627,7 @@ void Atom::set_atomflag_defaults()
    mesont_flag = 0;
    contact_radius_flag = smd_data_9_flag = smd_stress_flag = 0;
    eff_plastic_strain_flag = eff_plastic_strain_rate_flag = 0;
@@ -34,23 +36,25 @@ index 9a2bc75f0..91c786fe2 100644
  
    pdscale = 1.0;
  }
-@@ -2598,6 +2609,10 @@ void *Atom::extract(const char *name)
+@@ -2648,6 +2661,11 @@ void *Atom::extract(const char *name)
    if (strcmp(name,"dpdTheta") == 0) return (void *) dpdTheta;
    if (strcmp(name,"edpd_temp") == 0) return (void *) edpd_temp;
  
 +  // USER-GFMD package
 +  if (strcmp(name,"gid") == 0) return (void *) gid;
++  if (strcmp(name,"gflag") == 0) return (void *) gflag;
 +  if (strcmp(name,"xeq") == 0) return (void *) xeq;
 +
    // end of customization section
    // --------------------------------------------------------------------
  
-@@ -2681,6 +2696,10 @@ int Atom::extract_datatype(const char *name)
+@@ -2731,6 +2749,11 @@ int Atom::extract_datatype(const char *name)
    if (strcmp(name,"dpdTheta") == 0) return LAMMPS_DOUBLE;
    if (strcmp(name,"edpd_temp") == 0) return LAMMPS_DOUBLE;
  
 +  // USER-GFMD package
-+  if (strcmp(name,"gid") == 0) return LAMMPS_BIGINT;
++  if (strcmp(name,"gid") == 0) return LAMMPS_INT;
++  if (strcmp(name,"gflag") == 0) return LAMMPS_INT;
 +  if (strcmp(name,"xeq") == 0) return LAMMPS_DOUBLE_2D;
 +
    // end of customization section

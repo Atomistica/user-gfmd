@@ -1,20 +1,21 @@
 diff --git a/src/atom.h b/src/atom.h
-index bc69d3b27..cf23b577e 100644
+index bc69d3b27..f6f719fda 100644
 --- a/src/atom.h
 +++ b/src/atom.h
-@@ -157,6 +157,11 @@ class Atom : protected Pointers {
+@@ -157,6 +157,12 @@ class Atom : protected Pointers {
    double *rho,*drho,*esph,*desph,*cv;
    double **vest;
  
 +  // USER-GFMD package
 +
-+  bigint *gid;
++  int **gid;
++  int *gflag;
 +  double **xeq;
 +
    // end of customization section
    // --------------------------------------------------------------------
  
-@@ -190,6 +195,10 @@ class Atom : protected Pointers {
+@@ -190,6 +196,10 @@ class Atom : protected Pointers {
    int contact_radius_flag,smd_data_9_flag,smd_stress_flag;
    int eff_plastic_strain_flag,eff_plastic_strain_rate_flag;
  
