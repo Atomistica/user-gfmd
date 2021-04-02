@@ -139,8 +139,8 @@ for i in numpy.arange(len(dstep)):
     print("File data not even the same length!  Invalid test."\
     "(Different number of probe atoms in in.gf and in.full?)")
   
-  sortorder=numpy.zeros((len(x1),), dtype=numpy.int)
-  recallbadindices=numpy.zeros((len(x1),), dtype=numpy.int)
+  sortorder=numpy.zeros((len(x1),), dtype=int)
+  recallbadindices=numpy.zeros((len(x1),), dtype=int)
   
   # Loop through all GF atoms
   no_err=1

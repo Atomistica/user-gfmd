@@ -85,8 +85,8 @@ for i in numpy.arange(len(dstep)):
   z1-=min(z1)
   z2-=min(z2)
   
-  sortorder=numpy.zeros((len(x1),), dtype=numpy.int)
-  recallbadindices=numpy.zeros((len(x1),), dtype=numpy.int)
+  sortorder=numpy.zeros((len(x1),), dtype=int)
+  recallbadindices=numpy.zeros((len(x1),), dtype=int)
   
   # Loop through all GF atoms
   no_err=1
