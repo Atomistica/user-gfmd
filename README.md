@@ -7,18 +7,34 @@ an elastic half-space from the dynamical matrix.
 
 This is an implementation of the method described in:
 
-- [C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)](http://dx.doi.org/10.1103/PhysRevB.74.075420)
-- [L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)](http://dx.doi.org/10.1103/PhysRevB.86.075459)
+- [C. Campana, M.H. Muser, Phys. Rev. B 74, 075420 (2006)](https://doi.org/10.1103/PhysRevB.74.075420)
+- [L. Pastewka, T.A. Sharp, M.O. Robbins, Phys. Rev. B 86, 075459 (2012)](https://doi.org/10.1103/PhysRevB.86.075459)
 
 If you use this code, please cite these publications.
+
+This code was used in the following publications:
+
+- [T.A. Sharp, L. Pastewka, M.O. Robbins, Phys. Rev. B 93, 121402(R) (2016)](https://doi.org/10.1103/PhysRevB.93.121402)
+- [T.A. Sharp, L. Pastewka. V. Ligners, M.O. Robbins, Phys. Rev. B 96, 155436 (2017)](https://doi.org/10.1103/PhysRevB.96.155436)
+- [J.M. Monti, M.O. Robbins, ACS Nano 14, 16997 (2020)](https://doi.org/10.1021/acsnano.0c06241)
+
+Dislaimer & Warning
+-------------------
+
+The code is *absolutely not idiot proof*. If you plan to use it, please
+contact [Lars Pastewka](lars.pastewka@imtek.uni-freiburg.de).
 
 Build status
 ------------
 
-[![Build Status](https://travis-ci.org/Atomistica/user-gfmd.svg?branch=master)](https://travis-ci.org/Atomistica/user-gfmd)
+[![Build Status](https://travis-ci.com/Atomistica/user-gfmd.svg?branch=master)](https://travis-ci.org/Atomistica/user-gfmd)
 
 LAMMPS
 ------
+
+*You need LAMMPS `patch_10Feb2021` or later to run this code. The sign of the FFT
+transform was flipped in this release. Please make sure all tests pass. Tests
+will catch any problem with the FFT.*
 
 The files in this directory contain a user-contributed package for LAMMPS. See
 the documentation files of this commands for detailed usage. These can be
