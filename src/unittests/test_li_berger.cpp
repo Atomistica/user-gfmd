@@ -37,12 +37,12 @@ protected:
     virtual ~LiBergerTest() {
     };
     
-    static const int n_trials_ = 100;
-    static const double G_ = 1.0;
-    static const double nu_ = 1.0/3;
+    static constexpr int n_trials_ = 100;
+    static constexpr double G_ = 1.0;
+    static constexpr double nu_ = 1.0/3;
 
     /* Tolerance for comparing values */
-    static const double tol_ = 1e-12;
+    static constexpr double tol_ = 1e-12;
 };
 
 

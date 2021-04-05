@@ -34,7 +34,7 @@ protected:
     };
     
     /* Tolerance for comparing values */
-    static const double tol_ = 1e-12;
+    static constexpr double tol_ = 1e-12;
 };
 
 
