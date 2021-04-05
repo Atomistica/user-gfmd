@@ -2,8 +2,6 @@ dist: focal
 language: cpp
 compiler:
   - gcc
-env:
-  - LAMMPS_REV=15407
 before_install:
   - sudo apt-get update -q
   - sudo apt-get -y install software-properties-common strace libnuma-dev libssl-dev curl wget git bash make file pkg-config gcc g++ gfortran python3-dev python3-pip python3-numpy openmpi-bin libopenmpi-dev libnetcdf-pnetcdf-dev libfftw3-3 libfftw3-dev libfftw3-mpi-dev 
@@ -12,8 +10,8 @@ install:
   - mv * USER-GFMD || true
   - mkdir LAMMPS
   - cd LAMMPS
-  - svn co -r $LAMMPS_REV https://github.com/lammps/lammps.git/trunk/src src
-  - svn co -r $LAMMPS_REV https://github.com/lammps/lammps.git/trunk/tools tools
+  - svn co https://github.com/lammps/lammps.git/trunk/src src
+  - svn co https://github.com/lammps/lammps.git/trunk/tools tools
   - cd src
   - mv ../../USER-GFMD .
   - sed -i 's/user-vtk user-yaff/user-vtk user-yaff user-gfmd/g' Makefile
