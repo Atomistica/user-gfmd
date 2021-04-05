@@ -28,7 +28,7 @@ contact [Lars Pastewka](lars.pastewka@imtek.uni-freiburg.de).
 Build status
 ------------
 
-[![Build Status](https://travis-ci.com/Atomistica/user-gfmd.svg?branch=master)](https://travis-ci.org/Atomistica/user-gfmd)
+[![Build Status](https://travis-ci.com/Atomistica/user-gfmd.svg?branch=master)](https://travis-ci.com/Atomistica/user-gfmd)
 
 LAMMPS
 ------
