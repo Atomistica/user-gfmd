@@ -75,7 +75,7 @@ nn_scale = 1.0
 #dstep = (1e-6, 1e-4, 1e-2, 1e-0)
 #folders = ('dstep0.000001/','dstep0.0001/','dstep0.01/','dstep1.0/')
 folders = glob.glob('01_test/dstep*')
-dsteplist = map(lambda x: float(x[x.find('dstep')+5:]), folders)
+dsteplist = [float(x[x.find('dstep')+5:]) for x in folders]
 dstep = numpy.array(dsteplist)
 
 interactivemode = 0
@@ -179,7 +179,7 @@ for i in numpy.arange(len(dstep)):
     for jj in numpy.arange(len(x1)):
       if not (recallbadindices[jj]):
         if (diffmag(x1[jj],y1[jj],z1[jj],x2[jj],y2[jj],z2[jj]) > (nn_scale/4.)):
-          print "Analysis script fatal error: The comparison is invalid but was not flagged!"
+          print("Analysis script fatal error: The comparison is invalid but was not flagged!")
         print("%14s%14e%14e%14e%14e%14e%14e%14e" % ( "full", denergy_full, x1[jj], y1[jj], z1[jj], fx1[jj], fy1[jj], fz1[jj] ))
         print("%14s%14e%14e%14e%14e%14e%14e%14e" % ( "gf  ", denergy_gf, x2[jj], y2[jj], z2[jj], fx2[jj], fy2[jj], fz2[jj] ))
     print((err2[i])**(0.5), "/", (absmag2[i])**(0.5))
