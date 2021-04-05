@@ -42,7 +42,7 @@ minimize        0.0 1.0e-7 1000 1000
 
 # Store the initial probe atom locations
 dump            initprobedump probe1 custom 1 dumpinitprobefull x y z fx fy fz
-dump_modify     initprobedump format "%f %f %f %50.45e %50.45e %50.45e"
+dump_modify     initprobedump format line "%f %f %f %50.45e %50.45e %50.45e"
 run             0 
 undump          initprobedump
 
@@ -68,7 +68,7 @@ minimize        0.0 1.0e-7 100000 100000
 unfix           2
 unfix           fixID1
 dump            probedump probe1 custom 1 dumpprobefull x y z fx fy fz
-dump_modify     probedump format "%f %f %f %50.45e %50.45e %50.45e"
+dump_modify     probedump format line "%f %f %f %50.45e %50.45e %50.45e"
 run             0
 
 

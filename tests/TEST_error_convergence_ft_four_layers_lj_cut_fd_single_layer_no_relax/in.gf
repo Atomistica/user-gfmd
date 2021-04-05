@@ -43,7 +43,7 @@ min_modify      dmax 0.01 line quadratic
 
 # Store the initial probe atom locations
 dump            initprobedump probe1 custom 1 dumpinitprobegf x y z fx fy fz
-dump_modify     initprobedump format "%f %f %f %50.45e %50.45e %50.45e"
+dump_modify     initprobedump format line "%f %f %f %50.45e %50.45e %50.45e"
 run             0 
 undump          initprobedump
 
@@ -69,7 +69,7 @@ min_modify      dmax 0.3 line quadratic
 unfix           2
 unfix           fixID1
 dump            probedump probe1 custom 1 dumpprobegf x y z fx fy fz
-dump_modify     probedump format "%f %f %f %50.45e %50.45e %50.45e"
+dump_modify     probedump format line "%f %f %f %50.45e %50.45e %50.45e"
 run             0
 
 
