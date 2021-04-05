@@ -74,8 +74,8 @@ void GFMDSolverFFT::set_grid_size(int in_nx, int in_ny, int in_dof)
                    0, 0, ylo_loc, yhi_loc, xlo_loc, xhi_loc,
                    0, 0, ylo_loc, yhi_loc, xlo_loc, xhi_loc,
                    0, 0, &nfft,
-	       //  usecollective which refers to something with MPI
-		   0);
+               //  usecollective which refers to something with MPI
+                   0);
 
   /*
   if (nfft != nxy_loc) {
@@ -92,8 +92,8 @@ void GFMDSolverFFT::set_grid_size(int in_nx, int in_ny, int in_dof)
 
 
 void GFMDSolverFFT::fft_forward(double **input_buffer,
-				double_complex **q_buffer,
-				double_complex **fac)
+                                double_complex **q_buffer,
+                                double_complex **fac)
 {
   for (int idim = 0; idim < ndof; idim++) {
     /*
@@ -111,7 +111,7 @@ void GFMDSolverFFT::fft_forward(double **input_buffer,
     /*
      * perform the FFT!
      */
-    fft->compute(fft_data, fft_data, -1);
+    fft->compute(fft_data, fft_data, 1);
 
     if (fac) {
       /*
@@ -120,12 +120,12 @@ void GFMDSolverFFT::fft_forward(double **input_buffer,
       double_complex *cfac = fac[idim/3];
       m = 0;
       for (int idq = 0; idq < nxy_loc; idq++){
-	/*
-	 * pack double array data into complex array
-	 */
-	q_buffer[idq][idim] = 
-	  cfac[idq]*COMPLEX_NUMBER(fft_data[m], fft_data[m+1]);
-	m += 2;
+        /*
+         * pack double array data into complex array
+         */
+        q_buffer[idq][idim] = 
+          cfac[idq]*COMPLEX_NUMBER(fft_data[m], fft_data[m+1]);
+        m += 2;
       }
     }
     else {
@@ -134,11 +134,11 @@ void GFMDSolverFFT::fft_forward(double **input_buffer,
        */
       m = 0;
       for (int idq = 0; idq < nxy_loc; idq++){
-	/*
-	 * pack double array data into complex array
-	 */
-	q_buffer[idq][idim] = COMPLEX_NUMBER(fft_data[m], fft_data[m+1]);
-	m += 2;
+        /*
+         * pack double array data into complex array
+         */
+        q_buffer[idq][idim] = COMPLEX_NUMBER(fft_data[m], fft_data[m+1]);
+        m += 2;
       }
     }
   }
@@ -146,8 +146,8 @@ void GFMDSolverFFT::fft_forward(double **input_buffer,
 
 
 void GFMDSolverFFT::fft_reverse(double_complex **q_buffer,
-				double **output_buffer,
-				double_complex **fac)
+                                double **output_buffer,
+                                double_complex **fac)
 {
   for (int idim = 0; idim < ndof; idim++){
     if (fac) {
@@ -157,9 +157,9 @@ void GFMDSolverFFT::fft_reverse(double_complex **q_buffer,
       double_complex *cfac = fac[idim/3];
       int m = 0;
       for (int idq = 0; idq < nxy_loc; idq++){
-	double_complex v = conj(cfac[idq])*q_buffer[idq][idim];
-	fft_data[m++] = creal(v);
-	fft_data[m++] = cimag(v);
+        double_complex v = conj(cfac[idq])*q_buffer[idq][idim];
+        fft_data[m++] = creal(v);
+        fft_data[m++] = cimag(v);
       }
     }
     else {
@@ -168,15 +168,15 @@ void GFMDSolverFFT::fft_reverse(double_complex **q_buffer,
        */
       int m = 0;
       for (int idq = 0; idq < nxy_loc; idq++){
-	fft_data[m++] = creal(q_buffer[idq][idim]);
-	fft_data[m++] = cimag(q_buffer[idq][idim]);
+        fft_data[m++] = creal(q_buffer[idq][idim]);
+        fft_data[m++] = cimag(q_buffer[idq][idim]);
       }
     }
 
     /*
      * perform the FFT!
      */
-    fft->compute(fft_data, fft_data, 1);
+    fft->compute(fft_data, fft_data, -1);
 
     /*
      * Copy buffer to output

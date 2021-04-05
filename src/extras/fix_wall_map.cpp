@@ -1256,7 +1256,7 @@ void FixWallMap::filter_map(double **map_data)
   }
 
   // perform the FFT!
-  fft->compute(fft_data, fft_data, -1);
+  fft->compute(fft_data, fft_data, 1);
 
   // cut wavevectors
   m = 0;
@@ -1276,7 +1276,7 @@ void FixWallMap::filter_map(double **map_data)
   }
 
   // perform reverse FFT!
-  fft->compute(fft_data, fft_data, 1);
+  fft->compute(fft_data, fft_data, -1);
 
   // fill map buffer
   int nxy = nx_*ny_;
