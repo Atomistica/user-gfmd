@@ -16,6 +16,7 @@ This code was used in the following publications:
 
 - [T.A. Sharp, L. Pastewka, M.O. Robbins, Phys. Rev. B 93, 121402(R) (2016)](https://doi.org/10.1103/PhysRevB.93.121402)
 - [T.A. Sharp, L. Pastewka. V. Ligners, M.O. Robbins, Phys. Rev. B 96, 155436 (2017)](https://doi.org/10.1103/PhysRevB.96.155436)
+- [A. Klemenz, A. Gola, M. Moseler, L. Pastewka, Appl. Phys. Lett. 112, 061601 (2018)](https://doi.org/10.1063/1.5006770)
 - [J.M. Monti, M.O. Robbins, ACS Nano 14, 16997 (2020)](https://doi.org/10.1021/acsnano.0c06241)
 
 Dislaimer & Warning
