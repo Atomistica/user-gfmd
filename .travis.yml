@@ -25,6 +25,5 @@ install:
   - make unittests
 script:
   - ./unittests
-#  - $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI_serial -h
   - cd tests
-  - bash run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_CI_serial
+  - bash run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_g++_openmpi
