@@ -1,0 +1,12 @@
+--- MANYBODY/pair_eam.h	2015-02-11 10:59:15.000000000 +0100
++++ pair_eam.h	2015-02-19 11:31:11.000000000 +0100
+@@ -62,7 +62,8 @@
+   double memory_usage();
+   void swap_eam(double *, double **);
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
+   int nmax;                   // allocated size of per-atom arrays
+   double cutforcesq;
+ 
