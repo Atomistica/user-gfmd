@@ -1,9 +1,11 @@
 # ======================================================================
-# USER-GFMD - Green's function molecular dynamics for LAMMPS
+# USER-GFMD - Elastic half-space methods for LAMMPS
 # https://github.com/Atomistica/user-gfmd
 #
-# Copyright (2011-2016) Lars Pastewka <lars.pastewka@kit.edu>, Tristan A. Sharp
-# and others. See the AUTHORS file in the top-level USER-GFMD directory.
+# Copyright (2011-2016,2021)
+#    Lars Pastewka <lars.pastewka@imtek.uni-freiburg>,
+#    Tristan A. Sharp and others.
+# See the AUTHORS file in the top-level USER-GFMD directory.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
