@@ -29,6 +29,9 @@ class PairTersoffGF : public PairTersoff {
   PairTersoffGF(class LAMMPS *);
   virtual ~PairTersoffGF();
   virtual void compute(int, int);
+
+  template <int SHIFT_FLAG, int EVFLAG, int EFLAG, int VFLAG_ATOM>
+  void eval();
 };
 
 }

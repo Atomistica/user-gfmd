@@ -227,17 +227,31 @@ else
 fi
 
 if (test -e ../pair_eam.h) then
+  echo "Enabling EAM"
+  add_or_rm src/force_constants/fc_eam.cpp
+  add_or_rm src/force_constants/fc_eam_fd.cpp
+  add_or_rm src/force_constants/fc_eam.h
+  add_or_rm src/force_constants/fc_eam_fd.h
   add_or_rm src/force_constants/pair_eam_gf.cpp
   add_or_rm src/force_constants/pair_eam_alloy_gf.cpp
   add_or_rm src/force_constants/pair_eam_gf.h
   add_or_rm src/force_constants/pair_eam_alloy_gf.h
-  toggle_path ../pair_eam.h src/force_constants/pair_eam.h.patch
+  toggle_patch ../pair_eam.h src/force_constants/pair_eam.h.patch
 fi
 
 if (test -e ../pair_tersoff.h) then
+  echo "Enabling Tersoff"
+  add_or_rm src/force_constants/fc_tersoff.cpp
+  add_or_rm src/force_constants/fc_tersoff.h
   add_or_rm src/force_constants/pair_tersoff_gf.cpp
   add_or_rm src/force_constants/pair_tersoff_gf.h
-  toggle_path ../pair_tersoff.h src/force_constants/pair_tersoff.h.patch
+  toggle_patch ../pair_tersoff.h src/force_constants/pair_tersoff.h.patch
+fi
+
+if (test -e ../pair_atomistica.h) then
+  echo "Enabling Atomistica"
+  add_or_rm src/force_constants/fc_atomistica_fd.cpp
+  add_or_rm src/force_constants/fc_atomistica_fd.h
 fi
 
 if ((test $mode -ge 1) && (test ! -e ../fft3d_wrap.h)) then

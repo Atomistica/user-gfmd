@@ -1,12 +1,5 @@
---- pair_tersoff.h.orig	2015-11-16 16:49:43.310545896 -0500
-+++ pair_tersoff.h	2015-11-16 16:49:55.086921894 -0500
-@@ -34,7 +34,8 @@
-   virtual void init_style();
-   double init_one(int, int);
- 
-- protected:
-+// Next line commented out by USER-GFMD.
-+// protected:
-   struct Param {
-     double lam1,lam2,lam3;
-     double c,d,h;
+42,43c42
+< // Next line commented out by USER-GFMD.
+< // protected:
+---
+>  protected:

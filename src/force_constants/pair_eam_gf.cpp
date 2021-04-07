@@ -27,7 +27,7 @@
 #include "neigh_list.h"
 #include "memory.h"
 #include "error.h"
-#include "gfmd_grid.h"
+#include "update.h"
 
 using namespace LAMMPS_NS;
 
@@ -58,8 +58,7 @@ void PairEAMGF::compute(int eflag, int vflag)
   int *ilist,*jlist,*numneigh,**firstneigh;
 
   evdwl = 0.0;
-  if (eflag || vflag) ev_setup(eflag,vflag);
-  else evflag = vflag_fdotr = eflag_global = eflag_atom = 0;
+  ev_init(eflag,vflag);
 
   // grow energy and fp arrays if necessary
   // need to be atom->nmax in length
@@ -67,40 +66,33 @@ void PairEAMGF::compute(int eflag, int vflag)
   if (atom->nmax > nmax) {
     memory->destroy(rho);
     memory->destroy(fp);
+    memory->destroy(numforce);
     nmax = atom->nmax;
     memory->create(rho,nmax,"pair:rho");
     memory->create(fp,nmax,"pair:fp");
+    memory->create(numforce,nmax,"pair:numforce");
   }
 
   double **x = atom->x;
   double **f = atom->f;
-  bigint *gid = atom->gid;
+  int *gflag = atom->gflag;
   int *type = atom->type;
   int nlocal = atom->nlocal;
   int nall = nlocal + atom->nghost;
   int newton_pair = force->newton_pair;
 
-  if (!atom->gfmd_flag) gid = NULL;
+  if (!atom->gfmd_flag) gflag = nullptr;
 
   inum = list->inum;
   ilist = list->ilist;
   numneigh = list->numneigh;
   firstneigh = list->firstneigh;
 
-  // zero out density and derivative of embedding energy
+  // zero out density
 
   if (newton_pair) {
-    for (i = 0; i < nall; i++) {
-      rho[i] = 0.0;
-      fp[i] = 0.0;
-    }
-  } 
-  else {
-    for (i = 0; i < nlocal; i++) {
-      rho[i] = 0.0;
-      fp[i] = 0.0;
-    }
-  }
+    for (i = 0; i < nall; i++) rho[i] = 0.0;
+  } else for (i = 0; i < nlocal; i++) rho[i] = 0.0;
 
   // rho = density at each atom
   // loop over neighbors of my atoms
@@ -152,7 +144,7 @@ void PairEAMGF::compute(int eflag, int vflag)
   for (ii = 0; ii < inum; ii++) {
     i = ilist[ii];
     // if mask is present, do not compute those many body terms
-    if (gid && FLAG_FROM_POW2_IDX(gid[i])) continue;
+    if (gflag && gflag[i]) continue;
     p = rho[i]*rdrho + 1.0;
     m = static_cast<int> (p);
     m = MAX(1,MIN(m,nrho-1));
@@ -163,6 +155,7 @@ void PairEAMGF::compute(int eflag, int vflag)
     if (eflag) {
       phi = ((coeff[3]*p + coeff[4])*p + coeff[5])*p + coeff[6];
       if (rho[i] > rhomax) phi += fp[i] * (rho[i]-rhomax);
+      phi *= scale[type[i]][type[i]];
       if (eflag_global) eng_vdwl += phi;
       if (eflag_atom) eatom[i] += phi;
     }
@@ -171,6 +164,7 @@ void PairEAMGF::compute(int eflag, int vflag)
   // communicate derivative of embedding function
 
   comm->forward_comm_pair(this);
+  embedstep = update->ntimestep;
 
   // compute forces on each atom
   // loop over neighbors of my atoms
@@ -184,6 +178,7 @@ void PairEAMGF::compute(int eflag, int vflag)
 
     jlist = firstneigh[i];
     jnum = numneigh[i];
+    numforce[i] = 0;
 
     for (jj = 0; jj < jnum; jj++) {
       j = jlist[jj];
@@ -195,6 +190,7 @@ void PairEAMGF::compute(int eflag, int vflag)
       rsq = delx*delx + dely*dely + delz*delz;
 
       if (rsq < cutforcesq) {
+        ++numforce[i];
         jtype = type[j];
         r = sqrt(rsq);
         p = r*rdr + 1.0;
@@ -212,6 +208,7 @@ void PairEAMGF::compute(int eflag, int vflag)
         // psip needs both fp[i] and fp[j] terms since r_ij appears in two
         //   terms of embed eng: Fi(sum rho_ij) and Fj(sum rho_ji)
         //   hence embed' = Fi(sum rho_ij) rhojp + Fj(sum rho_ji) rhoip
+        // scale factor can be applied by thermodynamic integration
 
         coeff = rhor_spline[type2rhor[itype][jtype]][m];
         rhoip = (coeff[0]*p + coeff[1])*p + coeff[2];
@@ -228,8 +225,7 @@ void PairEAMGF::compute(int eflag, int vflag)
         psip = fp[i]*rhojp + fp[j]*rhoip;
 
         // if mask is present in both, do not compute those
-        if (!gid || !(FLAG_FROM_POW2_IDX(gid[i]) &&
-                      FLAG_FROM_POW2_IDX(gid[j]))) {
+        if (!gflag || !(gflag[i] && gflag[j])) {
             psip += phip;
             if (eflag) evdwl = phi;
         }
@@ -245,6 +241,7 @@ void PairEAMGF::compute(int eflag, int vflag)
           f[j][2] -= delz*fpair;
         }
 
+        if (eflag) evdwl = scale[itype][jtype]*phi;
         if (evflag) ev_tally(i,j,nlocal,newton_pair,
                              evdwl,0.0,fpair,delx,dely,delz);
       }
