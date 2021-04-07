@@ -1,0 +1,15 @@
+diff --git a/src/pair.h b/src/pair.h
+index b25ad448e..f1e19deb5 100644
+--- a/src/pair.h
++++ b/src/pair.h
+@@ -225,7 +225,9 @@ class Pair : protected Pointers {
+   double tabinner;              // inner cutoff for Coulomb table
+   double tabinner_disp;         // inner cutoff for dispersion table
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
++ public:
+   // for mapping of elements to atom types and parameters
+   // mostly used for manybody potentials
+   int nelements;                // # of unique elements
