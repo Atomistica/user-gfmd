@@ -76,7 +76,7 @@ double FCTersoff::energy_and_forces(const CrystalSurface *surf, int *mask,
             delz = jj->r[2]+u[3*i+2]-u[3*j+2];
             rsq = delx*delx + dely*dely + delz*delz;
 
-            iparam_ij = pair_->elem2param[itype][jtype][jtype];
+            iparam_ij = pair_->elem3param[itype][jtype][jtype];
             if (rsq > pair_->params[iparam_ij].cutsq) continue;
 
             pair_->repulsive(&pair_->params[iparam_ij],rsq,fpair,1,evdwl);
@@ -102,7 +102,7 @@ double FCTersoff::energy_and_forces(const CrystalSurface *surf, int *mask,
         for (int njj = 0; njj < jnum; njj++, jj++) {
             j = jj->indexj;
             jtype = pair_->map[type[j]];
-            iparam_ij = pair_->elem2param[itype][jtype][jtype];
+            iparam_ij = pair_->elem3param[itype][jtype][jtype];
 
             delr1[0] = -jj->r[0]-u[3*i+0]+u[3*j+0];
             delr1[1] = -jj->r[1]-u[3*i+1]+u[3*j+1];
@@ -120,7 +120,7 @@ double FCTersoff::energy_and_forces(const CrystalSurface *surf, int *mask,
                 if (jj == kk) continue;
                 k = kk->indexj;
                 ktype = pair_->map[type[k]];
-                iparam_ijk = pair_->elem2param[itype][jtype][ktype];
+                iparam_ijk = pair_->elem3param[itype][jtype][ktype];
                 
                 delr2[0] = -kk->r[0]-u[3*i+0]+u[3*k+0];
                 delr2[1] = -kk->r[1]-u[3*i+1]+u[3*k+1];
@@ -154,7 +154,7 @@ double FCTersoff::energy_and_forces(const CrystalSurface *surf, int *mask,
                 if (jj == kk) continue;
                 k = kk->indexj;
                 ktype = pair_->map[type[k]];
-                iparam_ijk = pair_->elem2param[itype][jtype][ktype];
+                iparam_ijk = pair_->elem3param[itype][jtype][ktype];
 
                 delr2[0] = -kk->r[0]-u[3*i+0]+u[3*k+0];
                 delr2[1] = -kk->r[1]-u[3*i+1]+u[3*k+1];

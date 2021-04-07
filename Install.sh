@@ -216,6 +216,7 @@ add_or_rm src/extras/fix_wall_map.h
 # Apply the tiny patches that LAMMPS requires for new styles
 toggle_patch ../atom.cpp src/main/atom.cpp.patch
 toggle_patch ../atom.h src/main/atom.h.patch
+toggle_pathc ../pair.h src/main/pair.h.patch
 toggle_patch ../pair_lj_smooth.h src/force_constants/pair_lj_smooth.h.patch
 
 if (test -e ../comm_brick.cpp) then
