@@ -1,5 +1,12 @@
-42,43c42
-< // Next line commented out by USER-GFMD.
-< // protected:
----
->  protected:
+--- MANYBODY/pair_tersoff.h	2021-04-01 16:45:48.176103876 +0200
++++ pair_tersoff.h	2021-04-07 10:43:25.368714701 +0200
+@@ -39,7 +39,8 @@
+ 
+   static constexpr int NPARAMS_PER_LINE = 17;
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
+ 
+   struct Param {
+     double lam1,lam2,lam3;

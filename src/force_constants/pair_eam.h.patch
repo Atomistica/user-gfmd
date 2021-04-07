@@ -1,5 +1,12 @@
-65,66c65
-< // Next line commented out by USER-GFMD.
-< // protected:
----
->  protected:
+--- MANYBODY/pair_eam.h	2021-04-01 16:45:48.172103877 +0200
++++ pair_eam.h	2021-04-07 10:43:33.464689434 +0200
+@@ -62,7 +62,8 @@
+   double memory_usage();
+   void swap_eam(double *, double **);
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
+   int nmax;                   // allocated size of per-atom arrays
+   double cutforcesq;
+   double **scale;

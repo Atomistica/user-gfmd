@@ -176,7 +176,6 @@ add_or_rm src/main/atom_vec_gfmd.h
 add_or_rm src/main/crystal_surface.h
 add_or_rm src/main/fix_gfmd.h
 add_or_rm src/main/force_constants.h
-add_or_rm src/main/gfmd_grid.h
 add_or_rm src/main/gfmd_misc.h
 add_or_rm src/main/gfmd_solver.h
 add_or_rm src/main/surface_stiffness.h
