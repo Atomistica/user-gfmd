@@ -216,7 +216,7 @@ add_or_rm src/extras/fix_wall_map.h
 # Apply the tiny patches that LAMMPS requires for new styles
 toggle_patch ../atom.cpp src/main/atom.cpp.patch
 toggle_patch ../atom.h src/main/atom.h.patch
-toggle_pathc ../pair.h src/main/pair.h.patch
+toggle_patch ../pair.h src/main/pair.h.patch
 toggle_patch ../pair_lj_smooth.h src/force_constants/pair_lj_smooth.h.patch
 
 if (test -e ../comm_brick.cpp) then
@@ -228,6 +228,8 @@ fi
 
 if (test -e ../pair_eam.h) then
   echo "Enabling EAM"
+  set_or_unset GFMD_EAM
+
   add_or_rm src/force_constants/fc_eam.cpp
   add_or_rm src/force_constants/fc_eam_fd.cpp
   add_or_rm src/force_constants/fc_eam.h
@@ -241,6 +243,8 @@ fi
 
 if (test -e ../pair_tersoff.h) then
   echo "Enabling Tersoff"
+  set_or_unset GFMD_TERSOFF
+
   add_or_rm src/force_constants/fc_tersoff.cpp
   add_or_rm src/force_constants/fc_tersoff.h
   add_or_rm src/force_constants/pair_tersoff_gf.cpp
@@ -250,6 +254,8 @@ fi
 
 if (test -e ../pair_atomistica.h) then
   echo "Enabling Atomistica"
+  set_or_unset GFMD_ATOMISTICA
+
   add_or_rm src/force_constants/fc_atomistica_fd.cpp
   add_or_rm src/force_constants/fc_atomistica_fd.h
 fi
@@ -280,7 +286,7 @@ fi
 
 #
 if (test $fftw3 = 1) then 
-
+  echo "Enabling nonperiodic stiffness kernel"
   set_or_unset GFMD_FFTW3
 
   add_or_rm src/stiffness_kernels/nonperiodic_stiffness.cpp
@@ -289,6 +295,9 @@ fi
 
 #
 if (test $dynamic = 1) then
+  echo "Enabling dynamic solver"
+  set_or_unset GFMD_DYNAMIC
+
   add_or_rm src/solvers/gfmd_solver_dynamic.cpp
   add_or_rm src/solvers/gfmd_solver_dynamic.h
 fi

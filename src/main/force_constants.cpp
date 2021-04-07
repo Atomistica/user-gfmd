@@ -30,10 +30,17 @@
 #include "fc_pair_potential.h"
 #endif
 
-#ifdef GFMD_MANYBODY
+#ifdef GFMD_EAM
 #include "fc_eam.h"
 #include "fc_eam_fd.h"
+#endif
+
+#ifdef GFMD_TERSOFF
 #include "fc_tersoff.h"
+#endif
+
+#ifdef GFMD_ATOMISTICA
+#include "fc_atomistica.h"
 #endif
 
 ForceConstants::ForceConstants(const char *name, Force *force, Error *error,
@@ -128,10 +135,17 @@ ForceConstants *force_constants_factory(char *keyword, int narg, int *carg,
 #include "fc_pair_potential.h"
 #endif
 
-#ifdef GFMD_MANYBODY
+#ifdef GFMD_EAM
 #include "fc_eam.h"
 #include "fc_eam_fd.h"
+#endif
+
+#ifdef GFMD_TERSOFF
 #include "fc_tersoff.h"
+#endif
+
+#ifdef GFMD_ATOMISTICA
+#include "fc_atomistica.h"
 #endif
 
 #undef FCStyle
