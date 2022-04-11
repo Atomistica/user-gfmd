@@ -1,12 +1,12 @@
---- MANYBODY/pair_tersoff.h	2021-04-01 16:45:48.176103876 +0200
-+++ pair_tersoff.h	2021-04-07 10:43:25.368714701 +0200
-@@ -39,7 +39,8 @@
+--- MANYBODY/pair_tersoff.h	2022-04-11 10:31:45.692600565 +0200
++++ pair_tersoff.h	2022-04-11 10:50:13.055883216 +0200
+@@ -38,7 +38,8 @@
  
    static constexpr int NPARAMS_PER_LINE = 17;
  
 - protected:
 +// Next line commented out by USER-GFMD.
 +// protected:
- 
    struct Param {
-     double lam1,lam2,lam3;
+     double lam1, lam2, lam3;
+     double c, d, h;
