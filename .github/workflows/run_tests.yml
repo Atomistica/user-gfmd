@@ -34,6 +34,7 @@ jobs:
         sed -i 's/FFT_INC =/FFT_INC = -DFFT_FFTW3/g' MAKE/OPTIONS/Makefile.g++_openmpi
         sed -i 's/FFT_LIB =/FFT_LIB = -lfftw3/g' MAKE/OPTIONS/Makefile.g++_openmpi
         make yes-kspace
+        make yes-extra-pair
         make yes-manybody
         make yes-user-gfmd
         make g++_openmpi
