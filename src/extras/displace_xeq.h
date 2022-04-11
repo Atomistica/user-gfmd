@@ -42,11 +42,11 @@ CommandStyle(displace_xeq,DisplaceXEq)
 #ifndef LMP_DISPLACE_XEQ_H
 #define LMP_DISPLACE_XEQ_H
 
-#include "pointers.h"
+#include "command.h"
 
 namespace LAMMPS_NS {
 
-class DisplaceXEq : protected Pointers {
+class DisplaceXEq : public Command {
  public:
   DisplaceXEq(class LAMMPS *);
   void command(int, char **);

@@ -53,7 +53,7 @@ enum{MOVE_BY,MOVE_TO,RAMP};
 
 /* ---------------------------------------------------------------------- */
 
-DisplaceXEq::DisplaceXEq(LAMMPS *lmp) : Pointers(lmp) {}
+DisplaceXEq::DisplaceXEq(LAMMPS *lmp) : Command(lmp) {}
 
 /* ---------------------------------------------------------------------- */
 
