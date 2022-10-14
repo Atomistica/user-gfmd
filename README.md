@@ -42,7 +42,8 @@ the documentation files of this commands for detailed usage. These can be
 found in the `doc` subdirectory.
 
 Compiling this package along with LAMMPS requires the FFT3d wrappers from the
-kspace package of LAMMPS to be included.
+kspace package of LAMMPS to be included. Please configure lammps with the
+MANYBODY, KSPACE and EXTRA-PAIR packages.
 
 You should also append 'user-gfmd' to the 'PACKUSER' variable in the file of
 src/Makefile before invoke `make yes-user`. Note that `make yes-user-gfmd` does

@@ -1,32 +1,10 @@
-/* ======================================================================
-   USER-GFMD - Elastic half-space methods for LAMMPS
-   https://github.com/Atomistica/user-gfmd
-
-   Copyright (2011-2016,2021)
-      Lars Pastewka <lars.pastewka@imtek.uni-freiburg>,
-      Tristan A. Sharp and others.
-   See the AUTHORS file in the top-level USER-GFMD directory.
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 2 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-   ====================================================================== */
 diff --git a/src/atom.cpp b/src/atom.cpp
-index ecb82993c..8722637dc 100644
+index 3d843cbbbc..ac1e97ec09 100644
 --- a/src/atom.cpp
 +++ b/src/atom.cpp
-@@ -197,6 +197,12 @@ Atom::Atom(LAMMPS *lmp) : Pointers(lmp)
-   rho = drho = esph = desph = cv = nullptr;
-   vest = nullptr;
+@@ -216,6 +216,12 @@ Atom::Atom(LAMMPS *_lmp) : Pointers(_lmp)
+ 
+   area = ed = em = epsilon = curvature = q_unscaled = nullptr;
  
 +  // USER-GFMD package
 +
@@ -37,9 +15,9 @@ index ecb82993c..8722637dc 100644
    // end of customization section
    // --------------------------------------------------------------------
  
-@@ -509,6 +515,12 @@ void Atom::peratom_create()
-   add_peratom("eff_plastic_strain_rate",&eff_plastic_strain_rate,DOUBLE,0);
-   add_peratom("damage",&damage,DOUBLE,0);
+@@ -565,6 +571,12 @@ void Atom::peratom_create()
+   add_peratom("curvature",&curvature,DOUBLE,0);
+   add_peratom("q_unscaled",&q_unscaled,DOUBLE,0);
  
 +  // USER-GFMD package
 +
@@ -50,17 +28,17 @@ index ecb82993c..8722637dc 100644
    // end of customization section
    // --------------------------------------------------------------------
  }
-@@ -615,6 +627,7 @@ void Atom::set_atomflag_defaults()
-   mesont_flag = 0;
+@@ -646,6 +658,7 @@ void Atom::set_atomflag_defaults()
    contact_radius_flag = smd_data_9_flag = smd_stress_flag = 0;
    eff_plastic_strain_flag = eff_plastic_strain_rate_flag = 0;
+   nspecial15_flag = 0;
 +  gfmd_flag = 0;
  
    pdscale = 1.0;
  }
-@@ -2648,6 +2661,11 @@ void *Atom::extract(const char *name)
-   if (strcmp(name,"dpdTheta") == 0) return (void *) dpdTheta;
-   if (strcmp(name,"edpd_temp") == 0) return (void *) edpd_temp;
+@@ -2952,6 +2965,11 @@ void *Atom::extract(const char *name)
+   if (strcmp(name,"curvature") == 0) return (void *) curvature;
+   if (strcmp(name,"q_unscaled") == 0) return (void *) q_unscaled;
  
 +  // USER-GFMD package
 +  if (strcmp(name,"gid") == 0) return (void *) gid;
@@ -70,9 +48,9 @@ index ecb82993c..8722637dc 100644
    // end of customization section
    // --------------------------------------------------------------------
  
-@@ -2731,6 +2749,11 @@ int Atom::extract_datatype(const char *name)
-   if (strcmp(name,"dpdTheta") == 0) return LAMMPS_DOUBLE;
-   if (strcmp(name,"edpd_temp") == 0) return LAMMPS_DOUBLE;
+@@ -3074,6 +3092,11 @@ int Atom::extract_datatype(const char *name)
+   if (strcmp(name,"curvature") == 0) return LAMMPS_DOUBLE;
+   if (strcmp(name,"q_unscaled") == 0) return LAMMPS_DOUBLE;
  
 +  // USER-GFMD package
 +  if (strcmp(name,"gid") == 0) return LAMMPS_INT;

@@ -1,8 +1,8 @@
 --- MANYBODY/pair_eam.h	2022-04-11 10:31:45.688600532 +0200
 +++ pair_eam.h	2022-04-11 10:49:48.124758948 +0200
-@@ -61,7 +61,8 @@
-   double memory_usage();
-   void swap_eam(double *, double **);
+@@ -62,7 +62,8 @@
+   double memory_usage() override;
+   void swap_eam(double *, double **) override;
  
 - protected:
 +// Next line commented out by USER-GFMD.

@@ -219,13 +219,6 @@ toggle_patch ../atom.h src/main/atom.h.patch
 toggle_patch ../pair.h src/main/pair.h.patch
 toggle_patch ../pair_lj_smooth.h src/force_constants/pair_lj_smooth.h.patch
 
-if (test -e ../comm_brick.cpp) then
-  # We have a new LAMMPS version. Patch comm_brick.cpp
-  toggle_patch ../comm_brick.cpp src/main/comm_brick.cpp.patch
-else
-  toggle_patch ../comm.cpp src/main/comm.cpp.patch
-fi
-
 if (test -e ../pair_eam.h) then
   echo "Enabling EAM"
   set_or_unset GFMD_EAM
@@ -249,7 +242,6 @@ if (test -e ../pair_tersoff.h) then
   add_or_rm src/force_constants/fc_tersoff.h
   add_or_rm src/force_constants/pair_tersoff_gf.cpp
   add_or_rm src/force_constants/pair_tersoff_gf.h
-  toggle_patch ../pair_tersoff.h src/force_constants/pair_tersoff.h.patch
 fi
 
 if (test -e ../pair_atomistica.h) then
