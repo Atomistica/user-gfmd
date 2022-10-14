@@ -125,7 +125,7 @@ void PairEAMAlloyGF::compute(int eflag, int vflag)
 
   // communicate and sum densities
 
-  if (newton_pair) comm->reverse_comm_pair(this);
+  if (newton_pair) comm->reverse_comm(this);
 
   // fp = derivative of embedding energy at each atom
   // phi = embedding energy at each atom
@@ -154,7 +154,7 @@ void PairEAMAlloyGF::compute(int eflag, int vflag)
 
   // communicate derivative of embedding function
 
-  comm->forward_comm_pair(this);
+  comm->forward_comm(this);
   embedstep = update->ntimestep;
 
   // compute forces on each atom
