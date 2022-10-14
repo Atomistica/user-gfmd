@@ -44,5 +44,5 @@ jobs:
     - name: Run tests
       run: |
         ${{ github.workspace }}/LAMMPS/src/USER-GFMD/unittests
-        cd tests
+        cd ${{ github.workspace }}/LAMMPS/src/USER-GFMD/tests
         bash run_tests.sh ${{ github.workspace }}/LAMMPS/src/lmp_g++_openmpi
