@@ -43,7 +43,6 @@ jobs:
 
     - name: Run tests
       run: |
-        cd USER-GFMD
-        ./unittests
+        $TRAVIS_BUILD_DIR/LAMMPS/src/USER-GFMD/unittests
         cd tests
         bash run_tests.sh $TRAVIS_BUILD_DIR/LAMMPS/src/lmp_g++_openmpi
