@@ -37,10 +37,6 @@ LAMMPS
 transform was flipped in this release. Please make sure all tests pass. Tests
 will catch any problem with the FFT.*
 
-The files in this directory contain a user-contributed package for LAMMPS. See
-the documentation files of this commands for detailed usage. These can be
-found in the `doc` subdirectory.
-
 Compiling this package along with LAMMPS requires the FFT3d wrappers from the
 kspace package of LAMMPS to be included. Please configure lammps with the
 MANYBODY, KSPACE and EXTRA-PAIR packages.
@@ -51,6 +47,21 @@ not work if used with the USER-CUDA package. If used with USER-CUDA, go into
 the USER-GFMD directory and execute `sh Install.sh 1` manually.
 
 Functionality beyond pair potentials will be included soon.
+
+Installation
+------------
+
+Note that we do not at present support CMake. A typical installation would
+look like this (in the LAMMPS `src` directory):
+
+```bash
+git clone https://github.com/Atomistica/user-gfmd.git USER-GFMD
+make yes-extra-pair
+make yes-manybody
+make yes-kspace
+make yes-user-gfmd
+make fftw
+```
 
 Testing
 -------

@@ -115,7 +115,7 @@ ForceConstants *force_constants_factory(char *keyword, int narg, int *carg,
                                         Force *force, Memory *memory,
                                         Error *error)
 {
-    char errstr[120];
+    char errstr[1024];
     ForceConstants *fc = NULL;
 
 #define FC_CLASS

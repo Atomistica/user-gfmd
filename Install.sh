@@ -242,6 +242,7 @@ if (test -e ../pair_tersoff.h) then
   add_or_rm src/force_constants/fc_tersoff.h
   add_or_rm src/force_constants/pair_tersoff_gf.cpp
   add_or_rm src/force_constants/pair_tersoff_gf.h
+  toggle_patch ../pair_tersoff.h src/force_constants/pair_tersoff.h.patch
 fi
 
 if (test -e ../pair_atomistica.h) then

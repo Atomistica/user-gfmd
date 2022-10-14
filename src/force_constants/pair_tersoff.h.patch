@@ -1,0 +1,14 @@
+diff --git a/src/MANYBODY/pair_tersoff.h b/src/MANYBODY/pair_tersoff.h
+index 88b529ff82..b81c27bee5 100644
+--- a/src/MANYBODY/pair_tersoff.h
++++ b/src/MANYBODY/pair_tersoff.h
+@@ -55,7 +55,8 @@ class PairTersoff : public Pair {
+     double c0;    // added for TersoffMODC
+   };
+ 
+- protected:
++// Next line commented out by USER-GFMD.
++// protected:
+   Param *params;      // parameter set for an I-J-K interaction
+   double cutmax;      // max cutoff for all elements
+   int maxshort;       // size of short neighbor list array

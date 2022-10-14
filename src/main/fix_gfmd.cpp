@@ -991,7 +991,7 @@ void FixGFMD::grid_to_list()
         f_i[i][1] = fy;
         f_i[i][2] = fz; 
         // f_i is thus set for all "gfmd_local" atoms, whether lmp_local or lmp_ghost atoms.
-        // f_i will be set in reverse_comm_fix for atoms that are gfmd_nonlocal and lmp_local.
+        // f_i will be set in reverse_comm for atoms that are gfmd_nonlocal and lmp_local.
         // A force_is_known error-check below ensures each local gfmd atom is assigned a gfmd-force.
 
         // sum all forces on GFMD layer
@@ -1013,7 +1013,7 @@ void FixGFMD::grid_to_list()
    * communicate other procs' ghost data back to this processor
    */
   // f_i is here set for all atoms that are both "gfmd_nonlocal" and ghosts of other procs.
-  comm->reverse_comm_fix(this);
+  comm->reverse_comm(this);
 
   // f_i is now set for all lmp_local atoms
   // as long as all local atoms were either gfmd_local 

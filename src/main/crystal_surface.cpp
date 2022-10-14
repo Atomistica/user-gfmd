@@ -696,7 +696,7 @@ bool CrystalSurface::check_neighbors(Error *error)
 CrystalSurface *crystal_surface_factory(char *keyword, int narg, int *carg,
                                         char **arg, Error *error)
 {
-    char errstr[120];
+    char errstr[1024];
     CrystalSurface *surface = NULL;
 
 #define CRYSTAL_SURFACE_CLASS
