@@ -54,9 +54,9 @@ AtomVecGFMD::AtomVecGFMD(LAMMPS *lmp) : AtomVec(lmp)
 
   fields_grow = {"xeq", "gid", "gflag"};
   fields_copy = {"xeq", "gid", "gflag"};
-  fields_comm = {""};
-  fields_comm_vel = {""};
-  fields_reverse = {""};
+  fields_comm = {};
+  fields_comm_vel = {};
+  fields_reverse = {};
   fields_border = {"xeq", "gid", "gflag"};
   fields_border_vel = {"xeq", "gid", "gflag"};
   fields_exchange = {"xeq", "gid", "gflag"};
