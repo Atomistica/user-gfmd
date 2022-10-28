@@ -77,7 +77,7 @@ FixContactSphere::FixContactSphere(LAMMPS *lmp, int narg, char **arg) :
   }
   else {
     if (strstr(arg[3], "v_") == arg[3]) {
-      cxvar = strdup(arg[3]+2);
+      cxvar = strdup(arg[3]);
     }
     else {
       cx = strtod(arg[3], &endptr);
@@ -91,7 +91,7 @@ FixContactSphere::FixContactSphere(LAMMPS *lmp, int narg, char **arg) :
   }
   else {
     if (strstr(arg[4], "v_") == arg[4]) {
-      cyvar = strdup(arg[4]+2);
+      cyvar = strdup(arg[4]);
     }
     else {
       cy = strtod(arg[4], &endptr);
@@ -105,7 +105,7 @@ FixContactSphere::FixContactSphere(LAMMPS *lmp, int narg, char **arg) :
   }
   else {
     if (strstr(arg[5], "v_") == arg[5]) {
-      czvar = strdup(arg[5]+2);
+      czvar = strdup(arg[5]);
     }
     else {
       cz = strtod(arg[5], &endptr);
