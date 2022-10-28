@@ -1,0 +1,130 @@
+processors    1 1 1
+
+boundary      p p m
+units         lj
+atom_style    gfmd
+
+read_data     initial.lammps
+#read_restart restart
+
+
+#
+# Define how many force steps we want to do
+#
+variable      start_step   equal 1
+variable      end_step     equal 20
+variable      zpos         equal 102.8
+variable      disp_step    equal -0.5
+# Force convergence criterion should be lower than our force step
+variable      force_tol    equal 1e-6
+
+
+#
+# rigid solid interactions
+#
+pair_style    lj/cut 1.0
+pair_modify   shift yes
+
+pair_coeff    1 1 1.0 1.0 0.0
+pair_coeff    2 2 1.0 1.0 0.0
+pair_coeff    3 3 1.0 1.0 0.0
+
+pair_coeff    1 3 0.0138888888888889 0.890898718140339   # = 1/72, 2^(-1./6) ---> d = 1, k = 1 
+pair_coeff    1 2 1.0 1.0 0.0
+pair_coeff    2 3 0.0138888888888889 0.890898718140339
+
+#pair_write    1 3 1000 r 0.1 2.0 pair_lj.out pair_lj
+
+#
+# Groups of atoms
+#
+group         elastic  type == 1    # Explicit elastic solid
+group         gfmd     type == 2    # GFMD layer
+group         rigid    type == 3    # Rigid counterpart
+
+#
+# Rigid surface (spherical indenter)
+#
+fix            wall all contact/sphere 128 128 v_zpos 100 0.0138888888888889 0.890898718140339 1.0
+#                                      ^   ^   ^      ^   ^                  ^                 ^
+#                                      |   |   |      |   |                  |                 |-- cutoff
+#                                      |   |   |      |   |                  |----------------- Lennard-Jones sigma
+#                                      |   |   |      |   |--------------------------------- Lennard-Jones epsilon
+#                                      |   |   |      |-- radius
+#                                      |   |   |-- z-center
+#                                      |   |-- y-center
+#                                      |--- x-center
+fix_modify     wall energy yes
+fix            force all store/force
+
+#
+# GFMD substrate
+#
+fix           gfmd all gfmd gfmd ft fcc100 1.0 1 pair-potential 1 1.0 height 128 reset_xeq reset_map
+#                                ^  ^      ^   ^ ^              ^ ^          ^
+#                                |  |      |   | |              | |          |-- nb of layers
+#                                |  |      |   | |              | |---------- spring constant
+#                                |  |      |   | |              |--------- nb of neighbors
+#                                |  |      |   | |--------------------- interaction potential
+#                                |  |      |   |-------------------- nb of unit cells
+#                                |  |      |--------------------- lattice constant
+#                                |  |-------------------------  crystal surface
+#                                |---------- "stiffness kernel" (control computation of global Hessian)
+fix_modify    gfmd energy yes
+
+#
+# Screen output
+#
+thermo        100
+thermo_style  custom step v_zpos fmax fnorm pe evdwl f_gfmd f_wall f_wall[4]
+thermo_modify format float "%14.8f" norm no
+
+#
+# Computes
+#
+compute       pe all pe
+
+#
+# Variables
+#
+variable      cm equal xcm(gfmd,z)
+variable      dh equal bound(gfmd,zmax)-bound(gfmd,zmin)
+
+#
+# Trajectory output and restart, essentially output initial and relaxed configuration
+#
+dump          xyz all xyz 10000000 traj.xyz
+
+#
+# Set-up minimizer
+#
+min_style     cg
+min_modify    line quadratic dmax 0.01
+
+#
+# Increase force
+#
+label         loop
+variable      a loop ${start_step} ${end_step}
+
+  #
+  # Minimize
+  #
+  minimize      0.0 ${force_tol} 10000000 10000000
+
+  variable      ncontact equal f_wall[4]
+  print         "Number of contacting atoms = ${ncontact}"
+
+  #
+  # Write restart file for this configuration
+  #
+  #write_restart restart.${a}
+
+  #
+  # Move sphere
+  #
+  variable      zpos equal ${zpos}+${disp_step}
+
+next          a
+jump          SELF loop
+
